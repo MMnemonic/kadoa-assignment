@@ -8,6 +8,8 @@ export function applySkinToDocument(skin: Skin = 'kadoa', theme: Theme = 'light'
 	const root = document.documentElement
 	root.setAttribute('data-skin', skin)
 	root.setAttribute('data-theme', theme)
+	// Toggle Tailwind dark mode
+	if (theme === 'dark') root.classList.add('dark'); else root.classList.remove('dark')
 	// For background layer rules
 	document.body.setAttribute('data-skin', skin)
 	localStorage.setItem(STORAGE_KEY, skin)

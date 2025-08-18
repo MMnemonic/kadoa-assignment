@@ -14,7 +14,7 @@ type UiState = {
 	setLastSeen: (iso: string) => void
 }
 
-export const useUi = create<UiState>((set) => {
+export const useUi = create<UiState>((set, get) => {
 	const skin = getInitialSkin()
 	const theme = getInitialTheme()
 	applySkinToDocument(skin, theme)
@@ -23,8 +23,8 @@ export const useUi = create<UiState>((set) => {
 		theme,
 		density: 'comfortable',
 		lastSeenAt: new Date().toISOString(),
-		setSkin: (s) => { applySkinToDocument(s, theme); set({ skin: s }) },
-		setTheme: (t) => { applySkinToDocument(skin, t); set({ theme: t }) },
+		setSkin: (s) => { applySkinToDocument(s, get().theme); set({ skin: s }) },
+		setTheme: (t) => { applySkinToDocument(get().skin, t); set({ theme: t }) },
 		setDensity: (d) => set({ density: d }),
 		setLastSeen: (iso) => set({ lastSeenAt: iso }),
 	}
