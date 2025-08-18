@@ -39,6 +39,7 @@
 body { @apply bg-[rgb(var(--bg-canvas))] text-[rgb(var(--text))]; }
 
 /* Subtle geometric background (triangles) on canvas wrapper */
+.app-bg { @apply bg-kadoa-pattern; }
 .kd-bg {
 	/* two layers of triangular grids at different scales */
 	background-image:
@@ -86,7 +87,9 @@ body { @apply bg-[rgb(var(--bg-canvas))] text-[rgb(var(--text))]; }
 	/* Buttons */
 	.ui-btn { @apply inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm border border-[rgb(var(--border))] dark:border-white/10 bg-[rgb(var(--bg-surface))] hover:bg-[rgb(var(--bg-subtle))] transition; }
 	.ui-btn--primary { @apply bg-[rgb(var(--accent))] text-white border-transparent hover:bg-[rgb(var(--accent-600))]; }
+	.ui-btn--ghost { @apply rounded-xl px-3 py-2 border border-white/10 bg-white/5 hover:bg-white/[.08] text-white/90 dark:text-white/90; }
 	.ui-iconbtn { @apply ui-btn p-2; border-radius: 10px; }
+	.focus-ring { @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/60; }
 
 	/* Badges / chips */
 	.ui-chip { @apply inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs border; }
@@ -109,6 +112,12 @@ body { @apply bg-[rgb(var(--bg-canvas))] text-[rgb(var(--text))]; }
 
 	/* Sticky toolbar wrapper */
 	.ui-sticky { @apply sticky top-[64px] z-30; }
+	.toolbar { @apply ui-card p-3; }
+	.toolbar[data-scrolled='true'] { @apply shadow-elev-1; }
+
+	/* List helpers */
+	.list-header { @apply sticky z-10 top-[128px] px-1 py-1 text-xs tracking-wide text-white/60 backdrop-blur; }
+	.skeleton { @apply animate-pulse bg-white/[.06] dark:bg-white/[.06] rounded-lg; }
 
 	/* Unread dot */
 	.unread-dot { @apply inline-block h-2 w-2 rounded-full bg-[rgb(var(--accent))]; }
