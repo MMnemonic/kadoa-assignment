@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { --sticky-offset: 96px; }
+
+:root[data-skin='kadoa'][data-theme='light'] {
+	--bg:#f5f6f7; --surface-0:#fff; --surface-1:#f3f4f6; --border:#e5e7eb;
+	--text:#0f172a; --muted:#64748b; --brand:#f97316; --brand-ink:#fff;
+	--badge-warn-bg:#fff7ed; --badge-warn-fg:#c2410c;
+	--badge-crit-bg:#fee2e2; --badge-crit-fg:#b91c1c;
+}
+
+:root[data-skin='kadoa'][data-theme='dark'] {
+	--bg:#0b0d10; --surface-0:#121417; --surface-1:#0f1114; --border:#23262b;
+	--text:#e5e7eb; --muted:#9aa3af; --brand:#f97316; --brand-ink:#0b0d10;
+	--badge-warn-bg:#2b1a10; --badge-warn-fg:#fb923c;
+	--badge-crit-bg:#2a1313; --badge-crit-fg:#f87171;
+}
+
+body[data-skin='kadoa'] {
+	background:
+		radial-gradient(1200px 600px at 80% -10%, rgba(249,115,22,0.05), transparent 60%),
+		linear-gradient(0deg, var(--bg), var(--bg));
+	color: var(--text);
+}
+
+@layer components {
+	.ui-card        { @apply bg-[var(--surface-0)] border border-[var(--border)] rounded-[10px]; }
+	.ui-surface     { @apply bg-[var(--surface-0)] text-[var(--text)]; }
+	.ui-btn         { @apply inline-flex items-center gap-2 rounded-[10px] px-3.5 py-2 border border-[var(--border)] bg-[var(--surface-0)] hover:bg-[color-mix(in_oklab,var(--surface-0),#000_4%)] transition; }
+	.ui-btn--primary{ @apply bg-[var(--brand)] text-[var(--brand-ink)] border-transparent hover:brightness-95; }
+	.ui-iconbtn     { @apply h-9 w-9 inline-grid place-items-center rounded-lg border border-[var(--border)] bg-[var(--surface-0)]; }
+	.ui-field       { @apply h-10 w-full rounded-[10px] border border-[var(--border)] bg-[var(--surface-0)] px-3 text-sm; }
+	.ui-chip        { @apply inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs; }
+	.ui-chip--warn  { @apply bg-[var(--badge-warn-bg)] text-[var(--badge-warn-fg)] border-transparent; }
+	.ui-chip--crit  { @apply bg-[var(--badge-crit-bg)] text-[var(--badge-crit-fg)] border-transparent; }
+	.ui-seg         { @apply inline-flex rounded-xl border border-[var(--border)] bg-[var(--surface-0)] p-0.5; }
+	.ui-segitem     { @apply px-3 py-1.5 text-sm rounded-lg data-[active=true]:bg-[var(--surface-1)]; }
+	.ui-kpi         { @apply ui-card p-4 flex items-center justify-between; }
+	.ui-sticky      { position: sticky; top: var(--sticky-offset); z-index: 20; }
+}
