@@ -31,16 +31,16 @@ export default function WorkflowFilter({ className }: { className?: string }) {
 			<Popover.Button className="ui-btn h-10">
 				<span className="mr-1">Workflows</span>
 				{selectedCount > 0 && (
-					<span className="ml-1 inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-brand-600 px-1.5 text-xs text-[var(--brand-ink)]">
+					<span className="ml-1 inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-brand-600 px-1.5 text-xs text-white">
 						{selectedCount}
 					</span>
 				)}
 				<ChevronDown className="ml-1 h-4 w-4 opacity-70" aria-hidden />
 			</Popover.Button>
 
-			<Popover.Panel className="absolute z-40 mt-2 w-72 rounded-xl border border-[var(--border)] bg-[var(--surface-0)] p-2 shadow-elev-2 focus:outline-none">
+			<Popover.Panel className="ui-surface absolute z-40 mt-2 w-72 rounded-xl p-2 shadow-elev-2 focus:outline-none">
 				<div className="mb-2 flex items-center justify-between px-1">
-					<span className="text-xs font-semibold text-[var(--muted)]">Select workflows</span>
+					<span className="text-xs font-semibold text-[rgb(var(--text-muted))]">Select workflows</span>
 					{selectedCount > 0 && (
 						<button className="text-xs underline opacity-80 hover:opacity-100" onClick={clearWorkflows}>
 							Clear
@@ -52,7 +52,7 @@ export default function WorkflowFilter({ className }: { className?: string }) {
 						const checked = workflowIds?.has(w.id)
 						return (
 							<li key={w.id}>
-								<label className="flex cursor-pointer items-center justify-between rounded-lg px-2 py-1.5 hover:bg-[var(--surface-1)]">
+								<label className="flex cursor-pointer items-center justify-between rounded-lg px-2 py-1.5 hover:bg-[rgb(var(--bg-subtle))]">
 									<span className="flex items-center gap-2">
 										<input
 											type="checkbox"
@@ -63,13 +63,13 @@ export default function WorkflowFilter({ className }: { className?: string }) {
 										/>
 										<span className="text-sm">{w.name}</span>
 									</span>
-									<span className="text-xs text-[var(--muted)]">{w.count ?? 0}</span>
+									<span className="text-xs text-[rgb(var(--text-muted))]">{w.count ?? 0}</span>
 								</label>
 							</li>
 						)
 					})}
 					{items.length === 0 && (
-						<li className="px-2 py-6 text-center text-sm text-[var(--muted)]">No workflows</li>
+						<li className="px-2 py-6 text-center text-sm text-[rgb(var(--text-muted))]">No workflows</li>
 					)}
 				</ul>
 			</Popover.Panel>

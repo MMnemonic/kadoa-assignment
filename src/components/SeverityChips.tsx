@@ -18,9 +18,10 @@ export default function SeverityChips({ includeInfo = false, className }: Props)
 		return (
 			<button
 				type="button"
-				className={clsx(className, active && 'ring-2 ring-brand-500/40')}
+				className={clsx(className, active && 'ring-2 ring-[rgb(var(--accent))]/40')}
 				aria-pressed={!!active}
 				onClick={() => toggleSeverity(sev)}
+				data-active={active}
 			>
 				{label}
 			</button>
@@ -29,7 +30,7 @@ export default function SeverityChips({ includeInfo = false, className }: Props)
 
 	return (
 		<div className={clsx('flex flex-wrap items-center gap-2', className)}>
-			{includeInfo && <Chip sev="info" label="Info" className="ui-chip" />}
+			{includeInfo && <Chip sev="info" label="Info" className="ui-chip ui-chip--info" />}
 			<Chip sev="warning" label="Warning" className="ui-chip ui-chip--warn" />
 			<Chip sev="critical" label="Critical" className="ui-chip ui-chip--crit" />
 		</div>

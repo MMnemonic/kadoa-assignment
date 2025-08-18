@@ -2,41 +2,90 @@
 @tailwind components;
 @tailwind utilities;
 
-:root { --sticky-offset: 96px; }
-
-:root[data-skin='kadoa'][data-theme='light'] {
-	--bg:#f5f6f7; --surface-0:#fff; --surface-1:#f3f4f6; --border:#e5e7eb;
-	--text:#0f172a; --muted:#64748b; --brand:#f97316; --brand-ink:#fff;
-	--badge-warn-bg:#fff7ed; --badge-warn-fg:#c2410c;
-	--badge-crit-bg:#fee2e2; --badge-crit-fg:#b91c1c;
+/* Kadoa variables — light defaults */
+:root {
+	--bg-canvas: 248 248 249;
+	--bg-surface: 255 255 255;
+	--bg-subtle: 249 250 251;
+	--border: 227 229 232;
+	--text: 23 23 24;
+	--text-muted: 98 104 112;
+	--accent: 249 115 22;
+	--accent-600: 234 88 12;
+	--chip-info: 59 130 246;
+	--chip-warn-bg: 254 243 199;
+	--chip-warn-text: 180 83 9;
+	--chip-crit-bg: 254 226 226;
+	--chip-crit-text: 153 27 27;
 }
 
-:root[data-skin='kadoa'][data-theme='dark'] {
-	--bg:#0b0d10; --surface-0:#121417; --surface-1:#0f1114; --border:#23262b;
-	--text:#e5e7eb; --muted:#9aa3af; --brand:#f97316; --brand-ink:#0b0d10;
-	--badge-warn-bg:#2b1a10; --badge-warn-fg:#fb923c;
-	--badge-crit-bg:#2a1313; --badge-crit-fg:#f87171;
+.dark:root {
+	--bg-canvas: 15 15 17;
+	--bg-surface: 24 24 27;
+	--bg-subtle: 18 18 20;
+	--border: 39 39 42;
+	--text: 244 244 245;
+	--text-muted: 161 161 170;
+	--accent: 249 115 22;
+	--accent-600: 234 88 12;
+	--chip-info: 96 165 250;
+	--chip-warn-bg: 46 32 17;
+	--chip-warn-text: 245 158 11;
+	--chip-crit-bg: 50 18 18;
+	--chip-crit-text: 248 113 113;
 }
 
-body[data-skin='kadoa'] {
-	background:
-		radial-gradient(1200px 600px at 80% -10%, rgba(249,115,22,0.05), transparent 60%),
-		linear-gradient(0deg, var(--bg), var(--bg));
-	color: var(--text);
+/* Canvas */
+body { @apply bg-[rgb(var(--bg-canvas))] text-[rgb(var(--text))]; }
+
+/* Subtle geometric background (triangles) on canvas wrapper */
+.kd-bg {
+	background-image:
+		linear-gradient(135deg, rgba(0,0,0,0.02) 25%, transparent 25%),
+		linear-gradient(225deg, rgba(0,0,0,0.02) 25%, transparent 25%),
+		linear-gradient(45deg, rgba(0,0,0,0.02) 25%, transparent 25%),
+		linear-gradient(315deg, rgba(0,0,0,0.02) 25%, rgba(0,0,0,0.02) 25%);
+	background-position: 10px 0, 10px 0, 0 0, 0 0;
+	background-size: 10px 10px;
+	background-repeat: repeat;
+}
+.dark .kd-bg {
+	background-image:
+		linear-gradient(135deg, rgba(255,255,255,0.03) 25%, transparent 25%),
+		linear-gradient(225deg, rgba(255,255,255,0.03) 25%, transparent 25%),
+		linear-gradient(45deg, rgba(255,255,255,0.03) 25%, transparent 25%),
+		linear-gradient(315deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.03) 25%);
 }
 
 @layer components {
-	.ui-card        { @apply bg-[var(--surface-0)] border border-[var(--border)] rounded-[10px]; }
-	.ui-surface     { @apply bg-[var(--surface-0)] text-[var(--text)]; }
-	.ui-btn         { @apply inline-flex items-center gap-2 rounded-[10px] px-3.5 py-2 border border-[var(--border)] bg-[var(--surface-0)] hover:bg-[color-mix(in_oklab,var(--surface-0),#000_4%)] transition; }
-	.ui-btn--primary{ @apply bg-[var(--brand)] text-[var(--brand-ink)] border-transparent hover:brightness-95; }
-	.ui-iconbtn     { @apply h-9 w-9 inline-grid place-items-center rounded-lg border border-[var(--border)] bg-[var(--surface-0)]; }
-	.ui-field       { @apply h-10 w-full rounded-[10px] border border-[var(--border)] bg-[var(--surface-0)] px-3 text-sm; }
-	.ui-chip        { @apply inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs; }
-	.ui-chip--warn  { @apply bg-[var(--badge-warn-bg)] text-[var(--badge-warn-fg)] border-transparent; }
-	.ui-chip--crit  { @apply bg-[var(--badge-crit-bg)] text-[var(--badge-crit-fg)] border-transparent; }
-	.ui-seg         { @apply inline-flex rounded-xl border border-[var(--border)] bg-[var(--surface-0)] p-0.5; }
-	.ui-segitem     { @apply px-3 py-1.5 text-sm rounded-lg data-[active=true]:bg-[var(--surface-1)]; }
-	.ui-kpi         { @apply ui-card p-4 flex items-center justify-between; }
-	.ui-sticky      { position: sticky; top: var(--sticky-offset); z-index: 20; }
+	/* Surfaces & cards */
+	.ui-surface { @apply bg-[rgb(var(--bg-surface))] border border-[rgb(var(--border))] dark:border-white/10 rounded-xl shadow-elev-1; }
+	.ui-card    { @apply ui-surface p-4; }
+	.ui-card-hover { @apply transition-all duration-150 hover:shadow-elev-2 hover:-translate-y-0.5; }
+
+	/* Buttons */
+	.ui-btn { @apply inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm border border-[rgb(var(--border))] dark:border-white/10 bg-[rgb(var(--bg-surface))] hover:bg-[rgb(var(--bg-subtle))] transition; }
+	.ui-btn--primary { @apply bg-[rgb(var(--accent))] text-white border-transparent hover:bg-[rgb(var(--accent-600))]; }
+	.ui-iconbtn { @apply ui-btn p-2; border-radius: 10px; }
+
+	/* Badges / chips */
+	.ui-chip { @apply inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs border; }
+	.ui-chip--info { @apply border-transparent bg-blue-50 text-blue-700 dark:bg-blue-500/10 dark:text-blue-300; }
+	.ui-chip--warn { background-color: rgb(var(--chip-warn-bg)); color: rgb(var(--chip-warn-text)); @apply border-transparent; }
+	.ui-chip--crit { background-color: rgb(var(--chip-crit-bg)); color: rgb(var(--chip-crit-text)); @apply border-transparent; }
+
+	/* KPI tiles */
+	.ui-kpi { @apply ui-card flex items-center justify-between; }
+	.ui-kpi__value { @apply text-2xl font-semibold tracking-tight; }
+	.ui-kpi__delta--up { @apply inline-flex items-center gap-1 rounded-full bg-green-50 text-green-700 px-2 py-0.5 text-xs border border-green-200 dark:bg-green-500/10 dark:text-green-300 dark:border-green-900; }
+	.ui-kpi__delta--down { @apply inline-flex items-center gap-1 rounded-full bg-red-50 text-red-700 px-2 py-0.5 text-xs border border-red-200 dark:bg-red-500/10 dark:text-red-300 dark:border-red-900; }
+
+	/* Inputs */
+	.ui-field { @apply rounded-lg border border-[rgb(var(--border))] dark:border-white/10 bg-[rgb(var(--bg-surface))] px-3 py-2 text-sm outline-none focus:ring-2 ring-[rgb(var(--accent))]; }
+
+	/* Sticky toolbar wrapper */
+	.ui-sticky { @apply sticky top-[64px] z-30; }
+
+	/* Unread dot */
+	.unread-dot { @apply inline-block h-2 w-2 rounded-full bg-[rgb(var(--accent))]; }
 }
