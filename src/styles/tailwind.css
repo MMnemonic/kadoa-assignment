@@ -94,6 +94,10 @@ body { @apply bg-[rgb(var(--bg-canvas))] text-[rgb(var(--text))]; }
 	.ui-chip--warn { background-color: rgb(var(--chip-warn-bg)); color: rgb(var(--chip-warn-text)); @apply border-transparent; }
 	.ui-chip--crit { background-color: rgb(var(--chip-crit-bg)); color: rgb(var(--chip-crit-text)); @apply border-transparent; }
 
+	/* Segmented control */
+	.ui-seg { @apply inline-flex items-center rounded-xl border border-[rgb(var(--border))] dark:border-white/10 bg-[rgb(var(--bg-surface))] p-0.5; }
+	.ui-segitem { @apply px-3 h-9 inline-flex items-center rounded-lg text-sm data-[active=true]:bg-[rgb(var(--bg-subtle))]; }
+
 	/* KPI tiles */
 	.ui-kpi { @apply ui-card flex items-center justify-between; }
 	.ui-kpi__value { @apply text-2xl font-semibold tracking-tight; }
