@@ -82,7 +82,7 @@ body { @apply bg-[rgb(var(--bg-canvas))] text-[rgb(var(--text))]; }
 	/* Surfaces & cards */
 	.ui-surface { @apply bg-[rgb(var(--bg-surface))] border border-[rgb(var(--border))] dark:border-white/10 rounded-xl shadow-elev-1; }
 	.ui-card    { @apply ui-surface p-4; }
-	.ui-card-hover { @apply transition-all duration-150 hover:shadow-elev-2 hover:-translate-y-0.5; }
+	.ui-card-hover { @apply transition-all duration-150 hover:shadow-elev-2 hover:-translate-y-0.5 hover:ring-1 hover:ring-[rgb(var(--accent))] hover:border-transparent focus-within:ring-1 focus-within:ring-[rgb(var(--accent))]; }
 
 	/* Buttons */
 	.ui-btn { @apply inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm border border-[rgb(var(--border))] dark:border-white/10 bg-[rgb(var(--bg-surface))] hover:bg-[rgb(var(--bg-subtle))] transition; }
@@ -116,7 +116,7 @@ body { @apply bg-[rgb(var(--bg-canvas))] text-[rgb(var(--text))]; }
 	.toolbar[data-scrolled='true'] { @apply shadow-elev-1; }
 
 	/* List helpers */
-	.list-header { @apply sticky z-10 top-[128px] px-1 py-1 text-xs tracking-wide text-white/60 backdrop-blur; }
+	.list-header { @apply sticky z-10 top-[128px] px-1 pt-1 pb-3 text-xs tracking-wide text-white/60 backdrop-blur bg-[rgb(var(--bg-surface))]; }
 	.skeleton { @apply animate-pulse bg-white/[.06] dark:bg-white/[.06] rounded-lg; }
 
 	/* Unread dot */
