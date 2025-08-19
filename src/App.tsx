@@ -9,7 +9,7 @@ import SettingsNotificationsPage from './routes/SettingsNotificationsPage'
 function TopBar() {
 	const { theme, setTheme } = useUi()
 	return (
-		<div data-topbar="true" className="sticky top-0 z-50 border-b border-[rgb(var(--border))]/70 backdrop-blur supports-[backdrop-filter]:bg-[rgb(var(--bg-canvas))]/70">
+		<div data-topbar="true" className="sticky top-0 z-50 border-b border-[rgb(var(--border))]/70 backdrop-blur bg-[rgb(var(--bg-canvas))]/80">
 			<div className="mx-auto max-w-7xl px-4 h-16 flex items-center justify-between">
 				<div className="flex items-center gap-3">
 					<div className="h-6 w-6 rounded-md bg-brand-500" aria-hidden />
