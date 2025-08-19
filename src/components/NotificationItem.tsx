@@ -22,6 +22,7 @@ type Props = {
 	// Backward compatibility with previous prop shape
 	n?: { id: string; title: string; sourceUrl: string; workflowName: string; severity: 'info'|'warning'|'critical'; unread: boolean }
 	selectedId?: string
+	onExternal?: (id: string, url?: string) => void
 }
 
 function severityChip(sev?: string) {
@@ -32,7 +33,7 @@ function severityChip(sev?: string) {
 	return null
 }
 
-export default function NotificationItem({ item, onOpen, n, selectedId }: Props) {
+export default function NotificationItem({ item, onOpen, n, selectedId, onExternal }: Props) {
 	const data: Item = item || (n ? { id: n.id, title: n.title, sourceUrl: n.sourceUrl, workflowName: n.workflowName, severity: n.severity, unread: n.unread } : ({} as any))
 	const title = data.title ?? data.message ?? 'New event detected'
 	const domain = data.domain ?? data.site ?? data.source ?? (data.sourceUrl ? new URL(data.sourceUrl).hostname : '')
@@ -42,11 +43,16 @@ export default function NotificationItem({ item, onOpen, n, selectedId }: Props)
 
 	const openDetails = () => onOpen?.(data.id)
 	const onKeyActivate: React.KeyboardEventHandler<HTMLElement> = (e) => {
+		// Only trigger for the article itself, not child controls
+		if (e.currentTarget !== e.target) return
 		if (e.key === 'Enter' || e.key === ' ') {
 			e.preventDefault()
 			openDetails()
 		}
 	}
+
+	// Best-effort URL detection from the item
+	const href = (data as any).url ?? (data as any).link ?? data.sourceUrl ?? (data as any).permalink ?? (data as any).page ?? null
 
 	return (
 		<article className="notif-card group cursor-pointer" data-selected={isSelected ? 'true' : undefined} role="button" tabIndex={0} onClick={openDetails} onKeyDown={onKeyActivate}>
@@ -54,9 +60,29 @@ export default function NotificationItem({ item, onOpen, n, selectedId }: Props)
 				<div className="notif-head">
 					<span className="unread-dot mt-2" style={{ opacity: data.unread ? 1 : 0.25 }} />
 					<h3 className="notif-title clamp-2">{title}</h3>
-					<button type="button" className="open-cta" aria-label="Open externally" onClick={(e) => { e.stopPropagation(); }}>
-						<ExternalLink size={16} />
-					</button>
+					{href ? (
+						<a
+							href={href as string}
+							target="_blank"
+							rel="noopener noreferrer"
+							className="open-cta"
+							aria-label="Open source"
+							onClick={(e) => e.stopPropagation()}
+							onMouseDown={(e) => e.stopPropagation()}
+						>
+							<ExternalLink size={16} />
+						</a>
+					) : (
+						<button
+							type="button"
+							className="open-cta"
+							aria-label="Open source"
+							onClick={(e) => { e.stopPropagation(); onExternal?.(data.id, undefined) }}
+							onMouseDown={(e) => e.stopPropagation()}
+						>
+							<ExternalLink size={16} />
+						</button>
+					)}
 				</div>
 
 				<div className="tags-row">
