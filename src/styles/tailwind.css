@@ -133,3 +133,8 @@ body { @apply bg-[rgb(var(--bg-canvas))] text-[rgb(var(--text))]; }
 	/* Unread dot */
 	.unread-dot { @apply inline-block h-2 w-2 rounded-full bg-[rgb(var(--accent))]; }
 }
+
+@layer utilities {
+	.no-scrollbar::-webkit-scrollbar { display: none; }
+	.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+}

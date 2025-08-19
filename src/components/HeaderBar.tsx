@@ -37,23 +37,35 @@ export default function HeaderBar() {
 			<section ref={toolbarRef} className="ui-glass p-3 ui-sticky">
 				<div className="grid gap-3">
 					{/* Row 1 — Search */}
-					<div className="flex items-center gap-2">
+					<div className="flex items-center">
 						<div className="relative w-full min-w-0">
 							<label className="sr-only" htmlFor="search">Search</label>
-							<input id="search" className="ui-field pl-8 w-full h-11 focus-ring" placeholder="Search (Ctrl+/)" value={filters.q||''} onChange={(e)=>filters.set({ q: e.target.value })} />
+							<input id="search" className="ui-field pl-8 w-full min-w-0 h-10 sm:h-11 text-sm sm:text-base focus-ring" placeholder="Search (Ctrl+/)" value={filters.q||''} onChange={(e)=>filters.set({ q: e.target.value })} />
 							<Search className="h-4 w-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-[rgb(var(--text-muted))]" />
 						</div>
 					</div>
 
-					{/* Row 2 — Filters + Refresh */}
-					<div className="flex flex-wrap items-center gap-2">
-						<div className="ui-seg h-11" role="group" aria-label="Unread">
+					{/* Row 2A — Segmented + Severity (mobile), collapses on >=sm */}
+					<div className="flex items-center gap-2 overflow-x-auto no-scrollbar -mx-1 px-1 sm:overflow-visible">
+						<div className="ui-seg h-9 sm:h-11" role="group" aria-label="Unread">
 							<button className="ui-segitem focus-ring" data-active={filters.unread===undefined||filters.unread===false} aria-pressed={(filters.unread??false)===false} onClick={()=>filters.set({ unread: undefined })}>All</button>
 							<button className="ui-segitem focus-ring" data-active={filters.unread===true} aria-pressed={filters.unread===true} onClick={()=>filters.set({ unread: true })}>Unread</button>
 						</div>
-						<SeverityChips />
-						<WorkflowFilter />
-						<button type="button" onClick={handleRefresh} className="ui-iconbtn ml-auto shrink-0" aria-label="Refresh" title="Refresh">
+						<SeverityChips className="text-sm" />
+
+						{/* On >=sm we also place Workflows + Refresh on this same line */}
+						<div className="hidden sm:flex items-center gap-2 ml-auto">
+							<WorkflowFilter />
+							<button type="button" onClick={handleRefresh} className="ui-iconbtn h-10 w-10" aria-label="Refresh" title="Refresh">
+								<RefreshCcw className="h-5 w-5" aria-hidden="true" />
+							</button>
+						</div>
+					</div>
+
+					{/* Row 2B — Workflows + Refresh (mobile only) */}
+					<div className="flex items-center gap-2 sm:hidden">
+						<WorkflowFilter className="flex-1" />
+						<button type="button" onClick={handleRefresh} className="ui-iconbtn ml-auto h-9 w-9" aria-label="Refresh" title="Refresh">
 							<RefreshCcw className="h-5 w-5" aria-hidden="true" />
 						</button>
 					</div>
