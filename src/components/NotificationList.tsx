@@ -15,6 +15,7 @@ type Props = {
 	items: Notification[]
 	onClearFilters?: () => void
 	loading?: boolean
+	onOpen?: (id: string) => void
 }
 
 function groupByDate(items: Notification[]) {
@@ -32,7 +33,7 @@ function groupByDate(items: Notification[]) {
 	return groups
 }
 
-export default function NotificationList({ items, onClearFilters, loading }: Props) {
+export default function NotificationList({ items, onClearFilters, loading, onOpen }: Props) {
 	if (loading) {
 		return (
 			<ul className="space-y-2">
@@ -58,7 +59,7 @@ export default function NotificationList({ items, onClearFilters, loading }: Pro
 					<li key={label}>
 						<div data-group={label} className="group-header">{label}</div>
 						<ul className="space-y-2">
-							{groups[label].map(n => (<NotificationItem key={n.id} n={n} />))}
+							{groups[label].map(n => (<NotificationItem key={n.id} n={n} onOpen={onOpen} />))}
 						</ul>
 					</li>
 				) : null

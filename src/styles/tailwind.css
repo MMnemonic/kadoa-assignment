@@ -123,6 +123,9 @@ body { @apply bg-[rgb(var(--bg-canvas))] text-[rgb(var(--text))]; }
 	.ui-glass-strong { @apply rounded-2xl border shadow-elev-2 backdrop-blur-none; background-color: rgb(var(--bg-surface) / 0.8); border-color: rgb(var(--border)); }
 	.ui-glass .notif-row, .ui-glass .ui-btn, .ui-glass .ui-chip, .ui-glass .ui-field, .ui-glass .ui-segitem, .ui-glass-strong .notif-row, .ui-glass-strong .ui-btn, .ui-glass-strong .ui-chip, .ui-glass-strong .ui-field, .ui-glass-strong .ui-segitem { background-color: rgb(var(--bg-surface)); }
 
+	/* Drawer helper */
+	.ui-drawer { @apply ui-glass-strong shadow-elev-2 rounded-l-2xl; }
+
 	/* Notification row layering */
 	.notif-row { @apply relative isolate z-0; }
 	.notif-row:hover, .notif-row:focus-within { @apply z-[20]; }
