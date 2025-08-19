@@ -115,11 +115,10 @@ body { @apply bg-[rgb(var(--bg-canvas))] text-[rgb(var(--text))]; }
 	.toolbar { @apply ui-card p-3; }
 	.toolbar[data-scrolled='true'] { @apply shadow-elev-1; }
 
-	/* List helpers */
-	.list-header { @apply sticky z-[5] top-[128px] px-1 pt-1 pb-3 text-xs tracking-wide text-white/60 backdrop-blur bg-[rgb(var(--bg-surface))] pointer-events-none; }
-	.skeleton { @apply animate-pulse bg-white/[.06] dark:bg-white/[.06] rounded-lg; }
+	/* Static group header inside list */
+	.group-header { @apply px-4 py-1 text-xs font-medium tracking-wide text-white/60; }
 
-	/* Notification row layering + accent */
+	/* Notification row layering */
 	.notif-row { @apply relative isolate z-0; }
 	.notif-row:hover, .notif-row:focus-within { @apply z-[20]; }
 

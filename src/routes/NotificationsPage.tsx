@@ -16,6 +16,23 @@ export default function NotificationsPage({ containerRef }: { containerRef: Reac
 	const filtersRef = useRef<HTMLDivElement>(null)
 	useStickyOffset({ containerRef, filtersRef, topbarSelector: '[data-topbar="true"]' })
 
+	const [offsetPx, setOffsetPx] = useState(96)
+	useEffect(() => {
+		const measure = () => {
+			const topbar = document.querySelector<HTMLElement>('[data-topbar="true"]')
+			const a = topbar?.getBoundingClientRect().height ?? 0
+			const b = filtersRef.current?.getBoundingClientRect().height ?? 0
+			setOffsetPx(Math.round(a + b + 8))
+		}
+		measure()
+		const ro = new ResizeObserver(measure)
+		const topbar = document.querySelector<HTMLElement>('[data-topbar="true"]')
+		topbar && ro.observe(topbar)
+		filtersRef.current && ro.observe(filtersRef.current)
+		window.addEventListener('resize', measure)
+		return () => { ro.disconnect(); window.removeEventListener('resize', measure) }
+	}, [])
+
 	useEffect(() => { filters.fromSearch(location.search) }, [])
 	useEffect(() => { list(parseQuery(location.search)) }, [location.search])
 	useEffect(() => {

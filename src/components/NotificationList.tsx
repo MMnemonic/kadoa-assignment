@@ -56,7 +56,7 @@ export default function NotificationList({ items, onClearFilters, loading }: Pro
 			{(['Today','Yesterday','Earlier'] as const).map((label) => (
 				groups[label].length ? (
 					<li key={label}>
-						<div className="list-header">{label}</div>
+						<div data-group={label} className="group-header">{label}</div>
 						<ul className="space-y-2">
 							{groups[label].map(n => (<NotificationItem key={n.id} n={n} />))}
 						</ul>
