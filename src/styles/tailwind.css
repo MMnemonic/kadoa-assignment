@@ -118,9 +118,9 @@ body { @apply bg-[rgb(var(--bg-canvas))] text-[rgb(var(--text))]; }
 	/* Static group header inside list */
 	.group-header { @apply px-4 py-1 text-xs font-medium tracking-wide text-white/60; }
 
-	/* --- Glass containers (subtle transparency) --- */
-	.ui-glass { @apply rounded-2xl border shadow-elev-1 backdrop-blur-none; background-color: rgba(var(--bg-surface), 0.975); border-color: color-mix(in srgb, rgb(var(--text-muted)) 10%, transparent); }
-	.ui-glass-strong { @apply rounded-2xl border shadow-elev-2 backdrop-blur-none; background-color: rgba(var(--bg-surface), 0.985); border-color: color-mix(in srgb, rgb(var(--text-muted)) 12%, transparent); }
+	/* --- Glass containers (near solid, no blur) --- */
+	.ui-glass { @apply rounded-2xl border shadow-elev-1 backdrop-blur-none; background-color: rgb(var(--bg-surface) / 0.8); border-color: rgb(var(--border)); }
+	.ui-glass-strong { @apply rounded-2xl border shadow-elev-2 backdrop-blur-none; background-color: rgb(var(--bg-surface) / 0.8); border-color: rgb(var(--border)); }
 	.ui-glass .notif-row, .ui-glass .ui-btn, .ui-glass .ui-chip, .ui-glass .ui-field, .ui-glass .ui-segitem, .ui-glass-strong .notif-row, .ui-glass-strong .ui-btn, .ui-glass-strong .ui-chip, .ui-glass-strong .ui-field, .ui-glass-strong .ui-segitem { background-color: rgb(var(--bg-surface)); }
 
 	/* Notification row layering */
