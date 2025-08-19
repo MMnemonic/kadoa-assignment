@@ -4,7 +4,7 @@ export type Theme = 'light' | 'dark'
 const STORAGE_KEY = 'nc.skin'
 const THEME_KEY = 'nc.theme'
 
-export function applySkinToDocument(skin: Skin = 'kadoa', theme: Theme = 'light') {
+export function applySkinToDocument(skin: Skin = 'kadoa', theme: Theme = 'dark') {
 	const root = document.documentElement
 	root.setAttribute('data-skin', skin)
 	root.setAttribute('data-theme', theme)
@@ -21,5 +21,5 @@ export function getInitialSkin(): Skin {
 }
 
 export function getInitialTheme(): Theme {
-	return (localStorage.getItem(THEME_KEY) as Theme) || 'light'
+	return (localStorage.getItem(THEME_KEY) as Theme) || 'dark'
 } 
