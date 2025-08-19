@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import { X, ExternalLink } from 'lucide-react'
 import type { Notification } from '../api/contracts'
 import Portal from '../components/Portal'
+import SafeValue, { renderSafeValue } from './SafeValue'
 
 type Props = {
 	open: boolean
@@ -40,6 +41,8 @@ export default function DetailsDrawer({ open, onClose, onPrev, onNext, data }: P
 
 	if (!open) return null
 
+	const bodyKey = (data as any)?.id ?? 'closed'
+
 	return (
 		<Portal>
 			{/* Full-screen container so nothing clips */}
@@ -59,7 +62,7 @@ export default function DetailsDrawer({ open, onClose, onPrev, onNext, data }: P
 					tabIndex={-1}
 					className={`absolute right-0 inset-y-0 w-[min(720px,100vw)] bg-[rgb(var(--bg-surface))] border-l border-[rgb(var(--border))] shadow-elev-2 pointer-events-auto outline-none transition-transform duration-300 will-change-transform ${open ? 'translate-x-0' : 'translate-x-full'}`}
 				>
-					<div className="grid h-full grid-rows-[auto,1fr,auto]">
+					<div key={bodyKey} className="grid h-full grid-rows-[auto,1fr,auto]">
 						{/* Header: title + controls + tabs */}
 						<div className="row-start-1 sticky top-0 z-10 bg-[rgb(var(--bg-surface))] border-b border-[rgb(var(--border))] px-4 pt-[calc(env(safe-area-inset-top,0px)+12px)] pb-4">
 							<div className="flex items-center justify-between gap-2 py-1">
@@ -88,8 +91,9 @@ export default function DetailsDrawer({ open, onClose, onPrev, onNext, data }: P
 
 						{/* Scrollable content */}
 						<div className="row-start-2 min-h-0 overflow-auto px-4 py-4 space-y-4">
+							{/* Summary */}
 							<section className="space-y-2">
-								<div className="text-sm text-white/80">{(data as any)?.summary ?? 'No summary available.'}</div>
+								<SafeValue value={(data as any)?.summary ?? 'No summary available.'} />
 								<div className="flex flex-wrap gap-2">
 									{((data as any)?.tags ?? []).map((t: string) => (
 										<span key={t} className="ui-chip">{t}</span>
@@ -97,14 +101,44 @@ export default function DetailsDrawer({ open, onClose, onPrev, onNext, data }: P
 								</div>
 							</section>
 
-							<section className="ui-card bg-white/5">
-								<div className="text-xs uppercase tracking-wide text-white/60 mb-2">Change preview</div>
-								<pre className="text-sm overflow-auto">{(data as any)?.diff ?? 'No diff available.'}</pre>
+							{/* Diff */}
+							<section className="space-y-2">
+								<div className="text-xs uppercase tracking-wide text-white/60">Change preview</div>
+								{(() => {
+									const raw: any = (data as any)?.diff ?? (data as any)?.changes
+									if (!raw) return <div className="text-white/50">No diff available.</div>
+									const rows: Array<{ field: string; before: unknown; after: unknown }> = Array.isArray(raw)
+										? raw
+										: Object.entries(raw as Record<string, any>).map(([field, val]) => {
+											if (val && typeof val === 'object' && 'before' in val && 'after' in val) {
+												return { field, before: (val as any).before, after: (val as any).after }
+											}
+											return { field, before: undefined, after: val }
+										})
+									if (!rows.length) return <div className="text-white/50">No diff available.</div>
+									return (
+										<div className="divide-y divide-white/10 rounded-xl overflow-hidden border border-white/10">
+											<div className="grid grid-cols-3 gap-3 px-3 py-2 text-xs uppercase tracking-wide text-white/50 bg-white/[.04]">
+												<div>Field</div>
+												<div>Before</div>
+												<div>After</div>
+											</div>
+											{rows.map((r, i) => (
+												<div key={r.field || i} className="grid grid-cols-3 gap-3 px-3 py-2">
+													<div className="font-medium">{String(r.field ?? '(unknown)')}</div>
+													<div>{renderSafeValue(r.before)}</div>
+													<div>{renderSafeValue(r.after)}</div>
+												</div>
+											))}
+										</div>
+									)
+								})()}
 							</section>
 
-							<section className="ui-card bg-white/5">
-								<div className="text-xs uppercase tracking-wide text-white/60 mb-2">Raw payload</div>
-								<pre className="text-xs overflow-auto">{JSON.stringify(((data as any)?.raw ?? {}), null, 2)}</pre>
+							{/* Raw */}
+							<section className="space-y-2">
+								<div className="text-xs uppercase tracking-wide text-white/60">Raw payload</div>
+								<SafeValue value={(data as any)?.raw ?? (data as any)?.payload ?? {}} />
 							</section>
 						</div>
 
