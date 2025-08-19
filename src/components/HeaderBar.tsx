@@ -46,10 +46,12 @@ export default function HeaderBar() {
 					</div>
 
 					{/* Row 2A — Segmented + Severity (mobile), collapses on >=sm */}
-					<div className="flex items-center gap-2 overflow-x-auto no-scrollbar -mx-1 px-1 sm:overflow-visible">
-						<div className="ui-seg h-9 sm:h-11" role="group" aria-label="Unread">
-							<button className="ui-segitem focus-ring" data-active={filters.unread===undefined||filters.unread===false} aria-pressed={(filters.unread??false)===false} onClick={()=>filters.set({ unread: undefined })}>All</button>
-							<button className="ui-segitem focus-ring" data-active={filters.unread===true} aria-pressed={filters.unread===true} onClick={()=>filters.set({ unread: true })}>Unread</button>
+					<div className="flex items-center gap-2 sm:gap-3 flex-wrap overflow-x-auto no-scrollbar -mx-1 px-1 sm:overflow-visible">
+						<div className="shrink-0">
+							<div className="ui-seg" role="group" aria-label="Read state">
+								<button type="button" className="ui-segitem" aria-pressed={!filters.unread} data-active={!filters.unread} onClick={() => filters.set({ unread: undefined })}>All</button>
+								<button type="button" className="ui-segitem" aria-pressed={!!filters.unread} data-active={!!filters.unread} onClick={() => filters.set({ unread: true })}>Unread</button>
+							</div>
 						</div>
 						<SeverityChips className="text-sm" />
 

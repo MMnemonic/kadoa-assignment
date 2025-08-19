@@ -98,8 +98,27 @@ body { @apply bg-[rgb(var(--bg-canvas))] text-[rgb(var(--text))]; }
 	.ui-chip--crit { background-color: rgb(var(--chip-crit-bg)); color: rgb(var(--chip-crit-text)); @apply border-transparent; }
 
 	/* Segmented control */
-	.ui-seg { @apply inline-flex items-center rounded-xl border border-[rgb(var(--bg-subtle))] dark:border-white/10 bg-[rgb(var(--bg-surface))] p-0.5; }
-	.ui-segitem { @apply px-3 h-9 inline-flex items-center rounded-lg text-sm data-[active=true]:bg-[rgb(var(--bg-subtle))]; }
+	.ui-seg {
+		@apply inline-flex items-center gap-1 rounded-2xl border
+			border-[rgb(var(--bg-subtle))] dark:border-white/10
+			bg-[rgb(var(--bg-surface))]
+			p-1;
+	}
+	.ui-segitem {
+		@apply inline-flex items-center justify-center rounded-xl
+			px-3 h-9 text-sm transition
+			text-white/70 dark:text-white/70
+			hover:bg-white/[.04]
+			focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--accent))];
+	}
+	.ui-segitem[data-active="true"],
+	.ui-segitem[aria-pressed="true"] {
+		@apply bg-white/[.10] text-white dark:text-white
+			ring-1 ring-[rgb(var(--accent))] font-medium;
+	}
+	@media (max-width: 420px) {
+		.ui-segitem { @apply h-8 px-2 text-[13px]; }
+	}
 
 	/* KPI tiles */
 	.ui-kpi { @apply ui-card flex items-center justify-between; }
