@@ -8,6 +8,7 @@ import { mockApi } from '../api/mockAdapter'
 import HeaderBar from '../components/HeaderBar'
 import NotificationList from '../components/NotificationList'
 import DetailsDrawer from '../components/DetailsDrawer'
+import { useDebouncedCallback } from 'use-debounce'
 
 export default function NotificationsPage({ containerRef }: { containerRef: React.RefObject<HTMLDivElement> }) {
 	const location = useLocation()
@@ -34,18 +35,39 @@ export default function NotificationsPage({ containerRef }: { containerRef: Reac
 		return () => { ro.disconnect(); window.removeEventListener('resize', measure) }
 	}, [])
 
-	useEffect(() => { filters.fromSearch(location.search) }, [])
-	useEffect(() => { list(parseQuery(location.search)) }, [location.search])
-	useEffect(() => {
-		const unsub = subscribe()
-		return () => unsub()
-	}, [])
+	const lastAppliedRef = useRef<string>('')
 
-	// Sync store -> URL
+	// Parse and apply once per navigation event
 	useEffect(() => {
-		const search = filters.toSearch()
-		const current = location.search.replace(/^\?/, '')
-		if (search !== current) navigate({ pathname: '/notifications', search: '?' + search }, { replace: true })
+		const params = parseQuery(location.search)
+		// Apply filters from URL only if different
+		const currentQs = location.search.replace(/^\?/, '')
+		if (filters.toSearch() !== currentQs) {
+			filters.fromSearch(location.search)
+		}
+		;(async () => {
+			try {
+				await list(params)
+			} finally {
+				// loading flag handled by store; ensure no leak
+			}
+		})()
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [location.key])
+
+	// Debounced store -> URL sync
+	const pushSearch = useDebouncedCallback((next: string) => {
+		const qs = next ? `?${next}` : ''
+		if (qs !== location.search && qs !== lastAppliedRef.current) {
+			lastAppliedRef.current = qs
+			navigate({ pathname: '/notifications', search: qs }, { replace: true })
+		}
+	}, 120)
+
+	useEffect(() => {
+		const next = filters.toSearch()
+		pushSearch(next)
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [filters.q, filters.unread, filters.severities, filters.workflowIds, filters.sort, filters.range])
 
 	const listItems = order.map(id => items.get(id)!).filter(Boolean)

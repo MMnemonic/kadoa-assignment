@@ -25,8 +25,13 @@ export const useNotifications = create<NotificationsState>((set, get) => ({
 			const data = await mockApi.list(params)
 			const map = new Map<string, Notification>()
 			for (const n of data) map.set(n.id, n)
-			set({ items: map, order: data.map(d => d.id), loading: false })
-		} catch (e: any) { set({ error: String(e), loading: false }) }
+			set({ items: map, order: data.map(d => d.id) })
+		} catch (e: any) {
+			console.error('listNotifications failed', e)
+			set({ error: String(e) })
+		} finally {
+			set({ loading: false })
+		}
 	},
 	async markRead(id) { await mockApi.markRead(id); },
 	async markUnread(id) { await mockApi.markUnread(id); },

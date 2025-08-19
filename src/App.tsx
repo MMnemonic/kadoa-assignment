@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { BrowserRouter, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { Sun, Moon, Settings } from 'lucide-react'
 import { useUi } from './store/useUi'
 import './styles/tailwind.css'
@@ -33,9 +33,10 @@ function Shell() {
 			<TopBar />
 			<main className="mx-auto max-w-7xl px-4 py-6">
 				<Routes>
+					<Route path="/" element={<Navigate to="/notifications" replace />} />
 					<Route path="/notifications" element={<NotificationsPage containerRef={containerRef} />} />
-					<Route path="/settings/notifications" element={<SettingsNotificationsPage />} />
-					<Route path="*" element={<NotificationsPage containerRef={containerRef} />} />
+					<Route path="/settings" element={<SettingsNotificationsPage />} />
+					<Route path="*" element={<Navigate to="/notifications" replace />} />
 				</Routes>
 			</main>
 		</div>
