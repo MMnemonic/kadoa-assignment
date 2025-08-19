@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { ExternalLink } from 'lucide-react'
 
 type Item = {
@@ -41,6 +41,8 @@ export default function NotificationItem({ item, onOpen, n, selectedId, onExtern
 	const tags = data.tags ?? (data.workflowName ? [data.workflowName] : [])
 	const isSelected = selectedId ? data.id === selectedId : false
 
+	const rowRef = useRef<HTMLElement>(null)
+
 	const openDetails = () => onOpen?.(data.id)
 	const onKeyActivate: React.KeyboardEventHandler<HTMLElement> = (e) => {
 		// Only trigger for the article itself, not child controls
@@ -54,8 +56,29 @@ export default function NotificationItem({ item, onOpen, n, selectedId, onExtern
 	// Best-effort URL detection from the item
 	const href = (data as any).url ?? (data as any).link ?? data.sourceUrl ?? (data as any).permalink ?? (data as any).page ?? null
 
+	// Ensure :focus-within is cleared (iOS can keep focus after opening _blank)
+	const clearRowFocus = (clicked?: HTMLElement) => {
+		clicked?.blur?.()
+		const active = document.activeElement as HTMLElement | null
+		if (active && rowRef.current && rowRef.current.contains(active)) {
+			active.blur()
+		}
+		requestAnimationFrame(() => {
+			const again = document.activeElement as HTMLElement | null
+			if (again && rowRef.current && rowRef.current.contains(again)) {
+				again.blur()
+			}
+		})
+		setTimeout(() => {
+			const later = document.activeElement as HTMLElement | null
+			if (later && rowRef.current && rowRef.current.contains(later)) {
+				later.blur()
+			}
+		}, 50)
+	}
+
 	return (
-		<article className="notif-card group cursor-pointer" data-selected={isSelected ? 'true' : undefined} role="button" tabIndex={0} onClick={openDetails} onKeyDown={onKeyActivate}>
+		<article ref={rowRef} className="notif-card group cursor-pointer" data-selected={isSelected ? 'true' : undefined} role="button" tabIndex={0} onClick={openDetails} onKeyDown={onKeyActivate}>
 			<div className="relative z-10">
 				<div className="notif-head">
 					<span className="unread-dot mt-2" style={{ opacity: data.unread ? 1 : 0.25 }} />
@@ -67,8 +90,9 @@ export default function NotificationItem({ item, onOpen, n, selectedId, onExtern
 							rel="noopener noreferrer"
 							className="open-cta"
 							aria-label="Open source"
-							onClick={(e) => e.stopPropagation()}
+							onClick={(e) => { e.stopPropagation(); clearRowFocus(e.currentTarget) }}
 							onMouseDown={(e) => e.stopPropagation()}
+							onPointerUp={(e) => clearRowFocus(e.currentTarget as HTMLAnchorElement)}
 						>
 							<ExternalLink size={16} />
 						</a>
@@ -77,8 +101,9 @@ export default function NotificationItem({ item, onOpen, n, selectedId, onExtern
 							type="button"
 							className="open-cta"
 							aria-label="Open source"
-							onClick={(e) => { e.stopPropagation(); onExternal?.(data.id, undefined) }}
+							onClick={(e) => { e.stopPropagation(); onExternal?.(data.id, undefined); clearRowFocus(e.currentTarget) }}
 							onMouseDown={(e) => e.stopPropagation()}
+							onPointerUp={(e) => clearRowFocus(e.currentTarget as HTMLButtonElement)}
 						>
 							<ExternalLink size={16} />
 						</button>
