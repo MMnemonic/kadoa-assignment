@@ -1,41 +1,79 @@
 import React from 'react'
+import { ExternalLink } from 'lucide-react'
 
-type Props = {
-	n: {
-		id: string
-		title: string
-		sourceUrl: string
-		workflowName: string
-		severity: 'info'|'warning'|'critical'
-		unread: boolean
-	}
-	onOpen?: (id: string) => void
+type Item = {
+	id: string
+	title?: string
+	message?: string
+	domain?: string
+	site?: string
+	source?: string
+	tags?: string[]
+	severity?: 'info' | 'warning' | 'critical'
+	unread?: boolean
+	timeago?: string
+	sourceUrl?: string
+	workflowName?: string
 }
 
-export default function NotificationItem({ n, onOpen }: Props) {
-	const domain = new URL(n.sourceUrl).hostname
+type Props = {
+	item?: Item
+	onOpen?: (id: string) => void
+	// Backward compatibility with previous prop shape
+	n?: { id: string; title: string; sourceUrl: string; workflowName: string; severity: 'info'|'warning'|'critical'; unread: boolean }
+	selectedId?: string
+}
+
+function severityChip(sev?: string) {
+	const s = (sev || '').toLowerCase()
+	if (s === 'critical') return <span className="ui-chip ui-chip--crit">critical</span>
+	if (s === 'warning') return <span className="ui-chip ui-chip--warn">warning</span>
+	if (s === 'info') return <span className="ui-chip ui-chip--info">info</span>
+	return null
+}
+
+export default function NotificationItem({ item, onOpen, n, selectedId }: Props) {
+	const data: Item = item || (n ? { id: n.id, title: n.title, sourceUrl: n.sourceUrl, workflowName: n.workflowName, severity: n.severity, unread: n.unread } : ({} as any))
+	const title = data.title ?? data.message ?? 'New event detected'
+	const domain = data.domain ?? data.site ?? data.source ?? (data.sourceUrl ? new URL(data.sourceUrl).hostname : '')
+	const timeago = data.timeago ?? ''
+	const tags = data.tags ?? (data.workflowName ? [data.workflowName] : [])
+	const isSelected = selectedId ? data.id === selectedId : false
+
+	const openDetails = () => onOpen?.(data.id)
+	const onKeyActivate: React.KeyboardEventHandler<HTMLElement> = (e) => {
+		if (e.key === 'Enter' || e.key === ' ') {
+			e.preventDefault()
+			openDetails()
+		}
+	}
+
 	return (
-		<li className="notif-row ui-card ui-card-hover p-5 transition-[transform,box-shadow] duration-150 hover:z-[20] focus-within:z-[20]">
-			<button
-				className="w-full text-left outline-none"
-				onClick={() => onOpen?.(n.id)}
-				onKeyDown={(e) => { if (e.key === 'Enter' || e.key.toLowerCase() === 'o') onOpen?.(n.id) }}
-			>
-				<div className="flex items-start justify-between gap-3">
-					<div className="flex-1">
-						<div className="flex items-center gap-2">
-							{n.unread && <span className="unread-dot animate-[pop_.18s_ease-out_both]" aria-label="Unread" />}
-							<h3 className="font-semibold tracking-tight text-[15px]">{n.title}</h3>
-							<span className="text-xs text-[rgb(var(--text-muted))]">{domain}</span>
-						</div>
-						<div className="text-xs text-[rgb(var(--text-muted))] flex items-center gap-2 mt-2">
-							<span className={`ui-chip ${n.severity==='warning'?'ui-chip--warn': n.severity==='critical'?'ui-chip--crit':'ui-chip--info'}`}>{n.severity}</span>
-							<span className="ui-chip">{n.workflowName}</span>
-						</div>
-					</div>
-					<a href={n.sourceUrl} target="_blank" rel="noopener" className="ui-btn ui-btn--ghost focus-ring">Open ↗</a>
+		<article className="notif-card group cursor-pointer" data-selected={isSelected ? 'true' : undefined} role="button" tabIndex={0} onClick={openDetails} onKeyDown={onKeyActivate}>
+			<div className="relative z-10">
+				<div className="notif-head">
+					<span className="unread-dot mt-2" style={{ opacity: data.unread ? 1 : 0.25 }} />
+					<h3 className="notif-title clamp-2">{title}</h3>
+					<button type="button" className="open-cta" aria-label="Open externally" onClick={(e) => { e.stopPropagation(); }}>
+						<ExternalLink size={16} />
+					</button>
 				</div>
-			</button>
-		</li>
+
+				<div className="tags-row">
+					{severityChip(data.severity)}
+					{tags.map((t, i) => (
+						<span key={`${t}-${i}`} className="ui-chip">{t}</span>
+					))}
+				</div>
+
+				{(domain || timeago) && (
+					<div className="meta-row">
+						{domain && <span className="truncate">{domain}</span>}
+						{domain && timeago && <span className="meta-dot" />}
+						{timeago && <span>{timeago}</span>}
+					</div>
+				)}
+			</div>
+		</article>
 	)
 } 

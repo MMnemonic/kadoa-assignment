@@ -89,7 +89,7 @@ export default function NotificationsPage({ containerRef }: { containerRef: Reac
 		<div className="space-y-4">
 			<HeaderBar />
 			<section className="ui-card ui-glass">
-				<NotificationList items={listItems as any} loading={loading} onOpen={setOpen} />
+				<NotificationList items={listItems as any} loading={loading} onOpen={setOpen} selectedId={openId} />
 			</section>
 			<DetailsDrawer open={!!openId} onClose={() => setOpen(undefined)} onPrev={currentIdx > 0 ? onPrev : undefined} onNext={currentIdx >= 0 && currentIdx < order.length - 1 ? onNext : undefined} data={current as any} />
 		</div>
