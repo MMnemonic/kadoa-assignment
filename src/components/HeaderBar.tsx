@@ -25,12 +25,14 @@ export default function HeaderBar() {
 
 	return (
 		<div className="space-y-4">
-			<section className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-				<div className="ui-kpi" aria-label="Unread KPI"><div>Unread</div><strong className="ui-kpi__value">{Array.from(items.values()).filter(n=>n.unread).length}</strong></div>
-				<div className="ui-kpi" aria-label="Critical 24h KPI"><div>Critical (24h)</div><strong className="ui-kpi__value">{Array.from(items.values()).filter(n=>n.severity==='critical').length}</strong></div>
-				<div className="ui-kpi" aria-label="New today KPI"><div>New today</div><strong className="ui-kpi__value">{order.slice(0,10).length}</strong></div>
+			<section className="ui-card ui-glass">
+				<div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+					<div className="ui-kpi" aria-label="Unread KPI"><div>Unread</div><strong className="ui-kpi__value">{Array.from(items.values()).filter(n=>n.unread).length}</strong></div>
+					<div className="ui-kpi" aria-label="Critical 24h KPI"><div>Critical (24h)</div><strong className="ui-kpi__value">{Array.from(items.values()).filter(n=>n.severity==='critical').length}</strong></div>
+					<div className="ui-kpi" aria-label="New today KPI"><div>New today</div><strong className="ui-kpi__value">{order.slice(0,10).length}</strong></div>
+				</div>
 			</section>
-			<section ref={toolbarRef} className="toolbar ui-sticky">
+			<section ref={toolbarRef} className="toolbar ui-sticky ui-glass">
 				<div className="grid grid-cols-12 gap-3 items-center">
 					<div className="col-span-12 lg:col-span-8 flex flex-wrap items-center gap-2">
 						<div className="relative w-full max-w-[min(42rem,100%)]">

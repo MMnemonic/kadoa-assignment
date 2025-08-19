@@ -52,7 +52,7 @@ export default function NotificationsPage({ containerRef }: { containerRef: Reac
 	return (
 		<div className="space-y-4">
 			<HeaderBar />
-			<section className="ui-card">
+			<section className="ui-card ui-glass">
 				<NotificationList items={listItems as any} loading={loading} />
 			</section>
 		</div>
