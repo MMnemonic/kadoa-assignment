@@ -14,7 +14,7 @@ type Props = {
 export default function NotificationItem({ n }: Props) {
 	const domain = new URL(n.sourceUrl).hostname
 	return (
-		<li className="ui-card ui-card-hover p-5 transition-[transform,box-shadow] duration-150">
+		<li className="notif-row ui-card ui-card-hover p-5 transition-[transform,box-shadow] duration-150 hover:z-[20] focus-within:z-[20]">
 			<div className="flex items-start justify-between gap-3">
 				<div className="flex-1">
 					<div className="flex items-center gap-2">
