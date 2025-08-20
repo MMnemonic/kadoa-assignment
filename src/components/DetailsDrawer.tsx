@@ -28,17 +28,6 @@ export default function DetailsDrawer({ open, onClose, onPrev, onNext, data }: P
 		}
 	}, [open])
 
-	useEffect(() => {
-		if (!open) return
-		const onKey = (e: KeyboardEvent) => {
-			if (e.key === 'Escape') onClose()
-			if (e.key.toLowerCase() === 'j') onNext?.()
-			if (e.key.toLowerCase() === 'k') onPrev?.()
-		}
-		window.addEventListener('keydown', onKey)
-		return () => window.removeEventListener('keydown', onKey)
-	}, [open, onClose, onNext, onPrev])
-
 	if (!open) return null
 
 	const bodyKey = (data as any)?.id ?? 'closed'
@@ -70,13 +59,11 @@ export default function DetailsDrawer({ open, onClose, onPrev, onNext, data }: P
 									<h2 id="drawer-title" className="truncate text-lg font-semibold">
 										{data?.title ?? 'Notification'}
 									</h2>
-									<div className="mt-1 text-xs text-white/60 truncate">
+									<div className="mt-1 text-xs text-[rgb(var(--text-muted))] dark:text-white/60 truncate">
 										{(data as any)?.sourceHost ?? ''} • {(data as any)?.workflowName ?? ''} • {(data as any)?.severity ?? ''}
 									</div>
 								</div>
 								<div className="flex items-center gap-2">
-									{onPrev && <button className="ui-btn ui-btn--ghost" onClick={onPrev}>K ↑</button>}
-									{onNext && <button className="ui-btn ui-btn--ghost" onClick={onNext}>J ↓</button>}
 									<button className="ui-btn ui-btn--ghost" onClick={onClose} aria-label="Close">
 										<X className="h-4 w-4" />
 									</button>
@@ -89,77 +76,77 @@ export default function DetailsDrawer({ open, onClose, onPrev, onNext, data }: P
 							</div>
 						</div>
 
-						{/* Scrollable content */}
-						<div className="row-start-2 min-h-0 overflow-auto px-4 py-4 space-y-4">
-							{/* Summary */}
-							<section className="space-y-2">
-								<SafeValue value={(data as any)?.summary ?? 'No summary available.'} />
-								<div className="flex flex-wrap gap-2">
-									{((data as any)?.tags ?? []).map((t: string) => (
-										<span key={t} className="ui-chip">{t}</span>
-									))}
-								</div>
-							</section>
+					{/* Scrollable content */}
+					<div className="row-start-2 min-h-0 overflow-auto px-4 py-4 space-y-4">
+						{/* Summary */}
+						<section className="space-y-2">
+							<SafeValue value={(data as any)?.summary ?? 'No summary available.'} />
+							<div className="flex flex-wrap gap-2">
+								{((data as any)?.tags ?? []).map((t: string) => (
+									<span key={t} className="ui-chip">{t}</span>
+								))}
+							</div>
+						</section>
 
-							{/* Diff */}
-							<section className="space-y-2">
-								<div className="text-xs uppercase tracking-wide text-white/60">Change preview</div>
-								{(() => {
-									const raw: any = (data as any)?.diff ?? (data as any)?.changes
-									if (!raw) return <div className="text-white/50">No diff available.</div>
-									const rows: Array<{ field: string; before: unknown; after: unknown }> = Array.isArray(raw)
-										? raw
-										: Object.entries(raw as Record<string, any>).map(([field, val]) => {
-											if (val && typeof val === 'object' && 'before' in val && 'after' in val) {
-												return { field, before: (val as any).before, after: (val as any).after }
-											}
-											return { field, before: undefined, after: val }
-										})
-									if (!rows.length) return <div className="text-white/50">No diff available.</div>
-									return (
-										<div className="divide-y divide-white/10 rounded-xl overflow-hidden border border-white/10">
-											<div className="grid grid-cols-3 gap-3 px-3 py-2 text-xs uppercase tracking-wide text-white/50 bg-white/[.04]">
-												<div>Field</div>
-												<div>Before</div>
-												<div>After</div>
-											</div>
-											{rows.map((r, i) => (
-												<div key={r.field || i} className="grid grid-cols-3 gap-3 px-3 py-2">
-													<div className="font-medium">{String(r.field ?? '(unknown)')}</div>
-													<div>{renderSafeValue(r.before)}</div>
-													<div>{renderSafeValue(r.after)}</div>
-												</div>
-											))}
+						{/* Diff */}
+						<section className="space-y-2">
+							<div className="text-xs uppercase tracking-wide text-[rgb(var(--text-muted))] dark:text-white/60">Change preview</div>
+							{(() => {
+								const raw: any = (data as any)?.diff ?? (data as any)?.changes
+								if (!raw) return <div className="text-white/50">No diff available.</div>
+								const rows: Array<{ field: string; before: unknown; after: unknown }> = Array.isArray(raw)
+									? raw
+									: Object.entries(raw as Record<string, any>).map(([field, val]) => {
+										if (val && typeof val === 'object' && 'before' in val && 'after' in val) {
+											return { field, before: (val as any).before, after: (val as any).after }
+										}
+										return { field, before: undefined, after: val }
+									})
+								if (!rows.length) return <div className="text-white/50">No diff available.</div>
+								return (
+									<div className="divide-y divide-white/10 rounded-xl overflow-hidden border border-white/10">
+										<div className="grid grid-cols-3 gap-3 px-3 py-2 text-xs uppercase tracking-wide text-white/50 bg-white/[.04]">
+											<div>Field</div>
+											<div>Before</div>
+											<div>After</div>
 										</div>
-									)
-								})()}
-							</section>
+										{rows.map((r, i) => (
+											<div key={r.field || i} className="grid grid-cols-3 gap-3 px-3 py-2">
+												<div className="font-medium">{String(r.field ?? '(unknown)')}</div>
+												<div>{renderSafeValue(r.before)}</div>
+												<div>{renderSafeValue(r.after)}</div>
+											</div>
+										))}
+									</div>
+								)
+							})()}
+						</section>
 
-							{/* Raw */}
-							<section className="space-y-2">
-								<div className="text-xs uppercase tracking-wide text-white/60">Raw payload</div>
-								<SafeValue value={(data as any)?.raw ?? (data as any)?.payload ?? {}} />
-							</section>
+						{/* Raw */}
+						<section className="space-y-2">
+							<div className="text-xs uppercase tracking-wide text-[rgb(var(--text-muted))] dark:text-white/60">Raw payload</div>
+							<SafeValue value={(data as any)?.raw ?? (data as any)?.payload ?? {}} />
+						</section>
+					</div>
+
+					{/* Footer */}
+					<div className="row-start-3 px-4 pt-4 pb-[calc(env(safe-area-inset-bottom,0px)+12px)] border-t border-[rgb(var(--border))] flex items-center justify-between gap-3">
+						<div className="flex gap-2">
+							<button className="ui-btn">Mark unread</button>
+							<button className="ui-btn">Pin</button>
 						</div>
-
-						{/* Footer */}
-						<div className="row-start-3 px-4 pt-4 pb-[calc(env(safe-area-inset-bottom,0px)+12px)] border-t border-[rgb(var(--border))] flex items-center justify-between gap-3">
-							<div className="flex gap-2">
-								<button className="ui-btn">Mark unread</button>
-								<button className="ui-btn">Pin</button>
-							</div>
-							<div className="flex gap-2">
-								<a className="ui-btn" href={(data as any)?.sourceUrl} target="_blank" rel="noopener noreferrer">
-									Open <ExternalLink className="h-4 w-4" />
-								</a>
-								{(data as any)?.workflowUrl && (
-									<a className="ui-btn" href={(data as any)?.workflowUrl} target="_blank" rel="noopener noreferrer">Workflow</a>
-								)}
-								<button className="ui-btn ui-btn--primary" onClick={onClose}>Close</button>
-							</div>
+						<div className="flex gap-2">
+							<a className="ui-btn" href={(data as any)?.sourceUrl} target="_blank" rel="noopener noreferrer">
+								Open <ExternalLink className="h-4 w-4" />
+							</a>
+							{(data as any)?.workflowUrl && (
+								<a className="ui-btn" href={(data as any)?.workflowUrl} target="_blank" rel="noopener noreferrer">Workflow</a>
+							)}
+							<button className="ui-btn ui-btn--primary" onClick={onClose}>Close</button>
 						</div>
 					</div>
-				</aside>
+				</div>
+			</aside>
 			</div>
 		</Portal>
 	)

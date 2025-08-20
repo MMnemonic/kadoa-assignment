@@ -78,7 +78,7 @@ export default function NotificationItem({ item, onOpen, n, selectedId, onExtern
 	}
 
 	return (
-		<article ref={rowRef} className="notif-card group cursor-pointer" data-selected={isSelected ? 'true' : undefined} role="button" tabIndex={0} onClick={openDetails} onKeyDown={onKeyActivate}>
+		<article ref={rowRef} className="notif-card group cursor-pointer" data-selected={isSelected ? 'true' : undefined} role="button" tabIndex={0} onClick={openDetails}>
 			<div className="relative z-10">
 				<div className="notif-head">
 					<span className="unread-dot mt-2" style={{ opacity: data.unread ? 1 : 0.25 }} />

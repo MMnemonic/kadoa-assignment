@@ -40,7 +40,7 @@ export default function HeaderBar() {
 					<div className="flex items-center">
 						<div className="relative w-full min-w-0">
 							<label className="sr-only" htmlFor="search">Search</label>
-							<input id="search" className="ui-field pl-8 w-full min-w-0 h-10 sm:h-11 text-sm sm:text-base focus-ring" placeholder="Search (Ctrl+/)" value={filters.q||''} onChange={(e)=>filters.set({ q: e.target.value })} />
+							<input id="search" className="ui-field pl-8 w-full min-w-0 h-10 sm:h-11 text-sm sm:text-base focus-ring placeholder:text-[rgb(var(--text-muted))] dark:placeholder:text-white/60" placeholder="Search (Ctrl+/)" value={filters.q||''} onChange={(e)=>filters.set({ q: e.target.value })} />
 							<Search className="h-4 w-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-[rgb(var(--text-muted))]" />
 						</div>
 					</div>

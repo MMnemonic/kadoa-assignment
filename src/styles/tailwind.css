@@ -4,19 +4,21 @@
 
 /* Kadoa variables — light defaults */
 :root {
-	--bg-canvas: 248 248 249;
-	--bg-surface: 255 255 255;
-	--bg-subtle: 249 250 251;
-	--border: 227 229 232;
-	--text: 23 23 24;
-	--text-muted: 98 104 112;
+	/* Light theme tuned for contrast */
+	--bg-canvas: 246 247 249;   /* slightly cooler, helps pattern fade */
+	--bg-surface: 255 255 255;  /* tiles/panels remain pure white */
+	--bg-subtle: 241 243 245;   /* used for active pill bg etc. */
+	--border: 212 217 223;      /* visible light border */
+	--text: 29 31 36;           /* ~#1d1f24 */
+	--text-muted: 100 110 121;  /* ~#646e79 */
 	--accent: 249 115 22;
 	--accent-600: 234 88 12;
 	--chip-info: 59 130 246;
-	--chip-warn-bg: 254 243 199;
+	/* gentler light chip backgrounds for contrast on white */
+	--chip-warn-bg: 255 247 232; /* #fff7e8 */
 	--chip-warn-text: 180 83 9;
-	--chip-crit-bg: 254 226 226;
-	--chip-crit-text: 153 27 27;
+	--chip-crit-bg: 255 237 238; /* #ffedee */
+	--chip-crit-text: 190 60 60;
 }
 
 .dark:root {
@@ -43,14 +45,14 @@ body { @apply bg-[rgb(var(--bg-canvas))] text-[rgb(var(--text))]; }
 .kd-bg {
 	/* two layers of triangular grids at different scales */
 	background-image:
-		linear-gradient(135deg, rgba(0,0,0,0.03) 25%, transparent 25%),
-		linear-gradient(225deg, rgba(0,0,0,0.03) 25%, transparent 25%),
-		linear-gradient(45deg, rgba(0,0,0,0.03) 25%, transparent 25%),
-		linear-gradient(315deg, rgba(0,0,0,0.03) 25%, rgba(0,0,0,0.03) 25%),
 		linear-gradient(135deg, rgba(0,0,0,0.02) 25%, transparent 25%),
 		linear-gradient(225deg, rgba(0,0,0,0.02) 25%, transparent 25%),
 		linear-gradient(45deg, rgba(0,0,0,0.02) 25%, transparent 25%),
-		linear-gradient(315deg, rgba(0,0,0,0.02) 25%, rgba(0,0,0,0.02) 25%);
+		linear-gradient(315deg, rgba(0,0,0,0.02) 25%, rgba(0,0,0,0.02) 25%),
+		linear-gradient(135deg, rgba(0,0,0,0.01) 25%, transparent 25%),
+		linear-gradient(225deg, rgba(0,0,0,0.01) 25%, transparent 25%),
+		linear-gradient(45deg, rgba(0,0,0,0.01) 25%, transparent 25%),
+		linear-gradient(315deg, rgba(0,0,0,0.01) 25%, rgba(0,0,0,0.01) 25%);
 	background-position:
 		20px 0, 20px 0, 0 0, 0 0,
 		80px 0, 80px 0, 60px 0, 60px 0;
@@ -80,44 +82,52 @@ body { @apply bg-[rgb(var(--bg-canvas))] text-[rgb(var(--text))]; }
 
 @layer components {
 	/* Surfaces & cards */
-	.ui-surface { @apply bg-[rgb(var(--bg-surface))] border border-[rgb(var(--bg-subtle))] dark:border-white/10 rounded-xl shadow-elev-1; }
+	.ui-surface { @apply bg-[rgb(var(--bg-surface))] border border-[rgb(var(--border))] dark:border-white/10 rounded-xl shadow-elev-1; }
 	.ui-card    { @apply ui-surface p-4; }
 	.ui-card-hover { @apply transition-all duration-150 hover:shadow-elev-2 hover:-translate-y-0.5 hover:ring-1 hover:ring-[rgb(var(--accent))] hover:border-transparent focus-within:ring-1 focus-within:ring-[rgb(var(--accent))]; }
 
 	/* Buttons */
-	.ui-btn { @apply inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm border border-[rgb(var(--bg-subtle))] dark:border-white/10 bg-[rgb(var(--bg-surface))] hover:bg-[rgb(var(--bg-subtle))] transition; }
+	.ui-btn { @apply inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm border border-[rgb(var(--border))] dark:border-white/10 bg-[rgb(var(--bg-surface))] hover:bg-[rgb(var(--bg-subtle))] transition; }
 	.ui-btn--primary { @apply bg-[rgb(var(--accent))] text-white border-transparent hover:bg-[rgb(var(--accent-600))]; }
-	.ui-btn--ghost { @apply rounded-xl px-3 py-2 border border-white/10 bg-white/5 hover:bg-white/[.08] text-white/90 dark:text-white/90; }
-	.ui-iconbtn { @apply ui-btn p-2; border-radius: 10px; }
+	/* Ghost buttons: light = crisp text + subtle bg; dark remains the same */
+	.ui-btn--ghost {
+		@apply rounded-xl px-3 py-2
+			border border-[rgb(var(--border))]
+			bg-[rgb(var(--bg-surface))] hover:bg-[rgb(var(--bg-subtle))]
+			text-[rgb(var(--text))]
+			dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/[.08] dark:text-white/90;
+	}
+	/* Icon buttons inherit the ghost treatment for light; keep dark as-is */
+	.ui-iconbtn {
+		@apply ui-btn p-2; border-radius: 10px;
+		@apply text-[rgb(var(--text-muted))] hover:text-[rgb(var(--text))] dark:text-white/80;
+	}
 	.focus-ring { @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/60; }
 
 	/* Badges / chips */
 	.ui-chip { @apply inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs border; }
 	.ui-chip--info { @apply border-transparent bg-blue-50 text-blue-700 dark:bg-blue-500/10 dark:text-blue-300; }
-	.ui-chip--warn { background-color: rgb(var(--chip-warn-bg)); color: rgb(var(--chip-warn-text)); @apply border-transparent; }
-	.ui-chip--crit { background-color: rgb(var(--chip-crit-bg)); color: rgb(var(--chip-crit-text)); @apply border-transparent; }
+	.ui-chip--warn { background-color: rgb(var(--chip-warn-bg)); color: rgb(var(--chip-warn-text)); @apply border-[rgb(var(--border))]; }
+	.ui-chip--crit { background-color: rgb(var(--chip-crit-bg)); color: rgb(var(--chip-crit-text)); @apply border-[rgb(var(--border))]; }
 
-	/* Segmented control */
+	/* Group header labels inside list (Today/Yesterday/Earlier) */
+	.group-header {
+		@apply px-4 py-1 text-xs font-medium tracking-wide
+			text-[rgb(var(--text-muted))] dark:text-white/60;
+	}
+
+	/* Segmented control: clear contrast in light, unchanged in dark */
 	.ui-seg {
-		@apply inline-flex items-center gap-1 rounded-2xl border
-			border-[rgb(var(--bg-subtle))] dark:border-white/10
-			bg-[rgb(var(--bg-surface))]
-			p-1;
+		@apply inline-flex items-center rounded-xl
+			border border-[rgb(var(--border))]
+			bg-[rgb(var(--bg-surface))] p-0.5
+			dark:border-white/10;
 	}
 	.ui-segitem {
-		@apply inline-flex items-center justify-center rounded-xl
-			px-3 h-9 text-sm transition
-			text-white/70 dark:text-white/70
-			hover:bg-white/[.04]
-			focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--accent))];
-	}
-	.ui-segitem[data-active="true"],
-	.ui-segitem[aria-pressed="true"] {
-		@apply bg-white/[.10] text-white dark:text-white
-			ring-1 ring-[rgb(var(--accent))] font-medium;
-	}
-	@media (max-width: 420px) {
-		.ui-segitem { @apply h-8 px-2 text-[13px]; }
+		@apply px-3 h-9 inline-flex items-center rounded-lg text-sm
+			text-[rgb(var(--text-muted))]
+			data-[active=true]:text-[rgb(var(--text))]
+			data-[active=true]:bg-[rgb(var(--bg-subtle))];
 	}
 
 	/* KPI tiles */
@@ -126,16 +136,20 @@ body { @apply bg-[rgb(var(--bg-canvas))] text-[rgb(var(--text))]; }
 	.ui-kpi__delta--up { @apply inline-flex items-center gap-1 rounded-full bg-green-50 text-green-700 px-2 py-0.5 text-xs border border-green-200 dark:bg-green-500/10 dark:text-green-300 dark:border-green-900; }
 	.ui-kpi__delta--down { @apply inline-flex items-center gap-1 rounded-full bg-red-50 text-red-700 px-2 py-0.5 text-xs border border-red-200 dark:bg-red-500/10 dark:text-red-300 dark:border-red-900; }
 
-	/* Inputs */
-	.ui-field { @apply rounded-lg border border-[rgb(var(--bg-subtle))] dark:border-white/10 bg-[rgb(var(--bg-surface))] px-3 py-2 text-sm outline-none focus:ring-2 ring-[rgb(var(--accent))]; }
+	/* Inputs: stronger border + readable placeholder in light */
+	.ui-field {
+		@apply rounded-lg border border-[rgb(var(--border))] dark:border-white/10
+			bg-[rgb(var(--bg-surface))] px-3 py-2 text-sm
+			outline-none focus:ring-2 ring-[rgb(var(--accent))]
+			placeholder:text-[rgb(var(--text-muted))];
+	}
 
 	/* Sticky toolbar wrapper */
 	.ui-sticky { @apply sticky top-[64px] z-30; }
 	.toolbar { @apply ui-card p-3; }
 	.toolbar[data-scrolled='true'] { @apply shadow-elev-1; }
 
-	/* Static group header inside list */
-	.group-header { @apply px-4 py-1 text-xs font-medium tracking-wide text-white/60; }
+	/* Static group header handled above */
 
 	/* --- Glass containers (near solid, no blur) --- */
 	.ui-glass { @apply rounded-2xl border shadow-elev-1 backdrop-blur-none; background-color: rgb(var(--bg-surface) / 0.8); border-color: rgb(var(--border)); }
@@ -180,6 +194,10 @@ body { @apply bg-[rgb(var(--bg-canvas))] text-[rgb(var(--text))]; }
 		.notif-title { @apply text-lg; }
 		.meta-row { @apply text-[13px]; }
 	}
+
+	/* Explicit helpers for titles/meta using tokens */
+	.notif-title { @apply text-[rgb(var(--text))]; }
+	.notif-meta  { @apply text-[rgb(var(--text-muted))]; }
 }
 
 @layer utilities {

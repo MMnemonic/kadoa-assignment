@@ -11,7 +11,7 @@ export function renderSafeValue(v: unknown): React.ReactNode {
 			</pre>
 		)
 	} catch {
-		return <span className="text-white/60">[unrenderable value]</span>
+		return <span className="text-[rgb(var(--text-muted))] dark:text-white/60">[unrenderable value]</span>
 	}
 }
 
