@@ -6,7 +6,7 @@ This repository contains a small Notification Center built with React + Tailwind
   <img src="public/preview.png" alt="Notification Center screenshot" width="100%" />
 </p>
 
-Preview: [kadoa-assignment.netlify.app](https://kadoa-assignment.netlify.app)
+Preview: <a href="https://kadoa-assignment.netlify.app" target="_blank" rel="noopener noreferrer">kadoa-assignment.netlify.app</a>
 
 ## Index
 
