@@ -47,8 +47,10 @@ export default function NotificationsPage({ containerRef }: { containerRef: Reac
 	// Parse and apply once per navigation event
 	useEffect(() => {
 		const params = parseQuery(location.search)
-		// Apply filters from URL only if different
-		const currentQs = location.search.replace(/^\?/, '')
+		// Apply filters from URL only if different (ignore drawer param `n`)
+		const current = new URLSearchParams(location.search)
+		current.delete('n')
+		const currentQs = current.toString()
 		if (filters.toSearch() !== currentQs) {
 			filters.fromSearch(location.search)
 		}
@@ -64,7 +66,12 @@ export default function NotificationsPage({ containerRef }: { containerRef: Reac
 
 	// Debounced store -> URL sync
 	const pushSearch = useDebouncedCallback((next: string) => {
-		const qs = next ? `?${next}` : ''
+		// Preserve drawer param `n` while syncing filters
+		const merged = new URLSearchParams(next)
+		const curr = new URLSearchParams(location.search)
+		const n = curr.get('n')
+		if (n) merged.set('n', n)
+		const qs = `?${merged.toString()}`
 		if (qs !== location.search && qs !== lastAppliedRef.current) {
 			lastAppliedRef.current = qs
 			navigate({ pathname: '/notifications', search: qs }, { replace: true })
