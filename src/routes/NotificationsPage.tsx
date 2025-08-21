@@ -9,12 +9,13 @@ import HeaderBar from '../components/HeaderBar'
 import NotificationList from '../components/NotificationList'
 import DetailsDrawer from '../components/DetailsDrawer'
 import { useDebouncedCallback } from 'use-debounce'
+import Pagination from '../components/Pagination'
 
-export default function NotificationsPage({ containerRef }: { containerRef: React.RefObject<HTMLDivElement> }) {
+export default function NotificationsPage({ containerRef }: { containerRef: React.RefObject<HTMLDivElement | null> }) {
 	const location = useLocation()
 	const navigate = useNavigate()
 	const filters = useFilters()
-	const { list, items, order, loading, subscribe } = useNotifications()
+	const { list, items, order, loading, subscribe, total, page, pageSize } = useNotifications()
 	const filtersRef = useRef<HTMLDivElement>(null)
 	useStickyOffset({ containerRef, filtersRef, topbarSelector: '[data-topbar="true"]' })
 
@@ -68,7 +69,15 @@ export default function NotificationsPage({ containerRef }: { containerRef: Reac
 		const next = filters.toSearch()
 		pushSearch(next)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [filters.q, filters.unread, filters.severities, filters.workflowIds, filters.sort, filters.range])
+	}, [filters.q, filters.unread, filters.severities, filters.workflowIds, filters.sort, filters.range, filters.page, filters.pageSize])
+
+	// Clamp page if out of range
+	useEffect(() => {
+		const totalPages = Math.max(1, Math.ceil(total / Math.max(1, pageSize)))
+		if (page > totalPages) {
+			filters.set({ page: totalPages })
+		}
+	}, [total, page, pageSize])
 
 	const listItems = order.map(id => items.get(id)!).filter(Boolean)
 
@@ -85,11 +94,19 @@ export default function NotificationsPage({ containerRef }: { containerRef: Reac
 	const onPrev = () => { if (currentIdx > 0) setOpen(order[currentIdx - 1]) }
 	const onNext = () => { if (currentIdx >= 0 && currentIdx < order.length - 1) setOpen(order[currentIdx + 1]) }
 
+	const onChangePage = (nextPage: number) => {
+		if (nextPage < 1) return
+		filters.set({ page: nextPage })
+	}
+
 	return (
 		<div className="space-y-4">
 			<HeaderBar />
 			<section className="ui-card ui-glass">
 				<NotificationList items={listItems as any} loading={loading} onOpen={setOpen} selectedId={openId} />
+				<div className="mt-4">
+					<Pagination page={page} pageSize={pageSize} total={total} onPageChange={onChangePage} />
+				</div>
 			</section>
 			<DetailsDrawer open={!!openId} onClose={() => setOpen(undefined)} onPrev={currentIdx > 0 ? onPrev : undefined} onNext={currentIdx >= 0 && currentIdx < order.length - 1 ? onNext : undefined} data={current as any} />
 		</div>

@@ -1,6 +1,6 @@
 import { addDays, addHours, formatISO, subDays } from 'date-fns'
 import { nanoid } from 'nanoid'
-import type { ListNotificationsParams, Notification, SavedView, Workflow } from './contracts'
+import type { ListNotificationsParams, Notification, SavedView, Workflow, ListNotificationsResult } from './contracts'
 
 // Small nanoid fallback if not installed
 function id() { try { return nanoid() } catch { return Math.random().toString(36).slice(2) } }
@@ -34,7 +34,7 @@ function seed() {
 		'Mention on social platform'
 	]
 	let now = new Date()
-	for (let i = 0; i < 40; i++) {
+	for (let i = 0; i < 120; i++) {
 		const wf = WORKFLOWS[i % WORKFLOWS.length]
 		const sev = severities[i % severities.length]
 		const created = addHours(subDays(now, Math.floor(i/6)), -i)
@@ -69,10 +69,23 @@ function matches(n: Notification, p: ListNotificationsParams): boolean {
 }
 
 export const mockApi = {
-	async list(params: ListNotificationsParams) {
-		const filtered = items.filter((n) => !n.snoozedUntil || new Date(n.snoozedUntil) < new Date()).filter((n) => matches(n, params))
+	async list(params: ListNotificationsParams): Promise<ListNotificationsResult> {
+		const filtered = items
+			.filter((n) => !n.snoozedUntil || new Date(n.snoozedUntil) < new Date())
+			.filter((n) => matches(n, params))
 		filtered.sort((a,b) => (params.sort === 'oldest' ? 1 : -1) * (a.createdAtISO.localeCompare(b.createdAtISO)))
-		return structuredClone(filtered)
+		const total = filtered.length
+		const pageSize = Math.max(1, params.pageSize ?? 10)
+		const page = Math.max(1, params.page ?? 1)
+		const start = (page - 1) * pageSize
+		const end = start + pageSize
+		const pageItems = filtered.slice(start, end)
+		return {
+			items: structuredClone(pageItems),
+			total,
+			page,
+			pageSize,
+		}
 	},
 	async markRead(idOrIds: string | string[]) {
 		const ids = Array.isArray(idOrIds) ? idOrIds : [idOrIds]
@@ -86,7 +99,7 @@ export const mockApi = {
 	async unpin(id: string) { const n = items.find(i => i.id === id); if (n) n.pinned = false },
 	async listWorkflows(): Promise<Workflow[]> {
 		const counts = new Map<string, number>()
-		for (const i of items) counts.set(i.workflowId, (counts.get(i.workflowId) || 0) + (i.unread ? 1 : 0))
+		for (const i of items) counts.set(i.workflowId, (counts.get(i.id) || 0) + (i.unread ? 1 : 0))
 		return WORKFLOWS.map(w => ({ ...w, count: counts.get(w.id) || 0 }))
 	},
 	async listSavedViews(): Promise<SavedView[]> {

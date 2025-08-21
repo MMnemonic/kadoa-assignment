@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useRef } from 'react'
 import { BrowserRouter, Navigate, Route, Routes, Link } from 'react-router-dom'
 import { Sun, Moon, Settings } from 'lucide-react'
 import { useUi } from './store/useUi'

@@ -27,4 +27,13 @@ export type ListNotificationsParams = {
 	workflowIds?: string[]
 	sort?: 'newest' | 'oldest'
 	range?: '24h' | '7d' | 'all'
+	page?: number
+	pageSize?: number
+}
+
+export type ListNotificationsResult = {
+	items: Notification[]
+	total: number
+	page: number
+	pageSize: number
 } 

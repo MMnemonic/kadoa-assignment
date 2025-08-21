@@ -9,6 +9,8 @@ export type FiltersState = {
 	workflowIds: Set<string>
 	sort?: 'newest' | 'oldest'
 	range?: '24h' | '7d' | 'all'
+	page?: number
+	pageSize?: number
 	set: (patch: Partial<FiltersState>) => void
 	fromSearch: (search: string) => void
 	toSearch: () => string
@@ -20,6 +22,8 @@ export type FiltersState = {
 export const useFilters = create<FiltersState>((set, get) => ({
 	severities: new Set(),
 	workflowIds: new Set(),
+	page: 1,
+	pageSize: 10,
 	set: (patch) => set({ ...get(), ...patch }),
 	fromSearch(search) {
 		const p = parseQuery(search)
@@ -30,6 +34,8 @@ export const useFilters = create<FiltersState>((set, get) => ({
 			workflowIds: new Set(p.workflowIds),
 			sort: p.sort,
 			range: p.range,
+			page: p.page ?? 1,
+			pageSize: p.pageSize ?? 10,
 		})
 	},
 	toSearch() {
@@ -40,19 +46,23 @@ export const useFilters = create<FiltersState>((set, get) => ({
 			severity: onlyWarnCrit,
 			workflowIds: Array.from(get().workflowIds),
 			sort: get().sort,
-			range: get().range
+			range: get().range,
+			page: get().page,
+			pageSize: get().pageSize,
 		}
 		return buildQuery(p)
 	},
 	toggleSeverity(sev) {
 		const next = new Set(get().severities)
 		if (next.has(sev)) next.delete(sev); else next.add(sev)
-		set({ severities: next })
+		// Reset to first page when filters change
+		set({ severities: next, page: 1 })
 	},
 	toggleWorkflow(id) {
 		const next = new Set(get().workflowIds)
 		if (next.has(id)) next.delete(id); else next.add(id)
-		set({ workflowIds: next })
+		// Reset to first page when filters change
+		set({ workflowIds: next, page: 1 })
 	},
-	clearWorkflows() { set({ workflowIds: new Set() }) }
+	clearWorkflows() { set({ workflowIds: new Set(), page: 1 }) }
 })) 

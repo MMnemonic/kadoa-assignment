@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { ListNotificationsParams, Notification } from '../api/contracts'
+import type { ListNotificationsParams, Notification, ListNotificationsResult } from '../api/contracts'
 import { mockApi } from '../api/mockAdapter'
 
 export type NotificationsState = {
@@ -7,6 +7,9 @@ export type NotificationsState = {
 	order: string[]
 	loading: boolean
 	error?: string
+	total: number
+	page: number
+	pageSize: number
 	list: (params: ListNotificationsParams) => Promise<void>
 	markRead: (id: string | string[]) => Promise<void>
 	markUnread: (id: string | string[]) => Promise<void>
@@ -19,13 +22,16 @@ export const useNotifications = create<NotificationsState>((set, get) => ({
 	items: new Map(),
 	order: [],
 	loading: false,
+	total: 0,
+	page: 1,
+	pageSize: 10,
 	async list(params) {
 		set({ loading: true, error: undefined })
 		try {
-			const data = await mockApi.list(params)
+			const data: ListNotificationsResult = await mockApi.list(params)
 			const map = new Map<string, Notification>()
-			for (const n of data) map.set(n.id, n)
-			set({ items: map, order: data.map(d => d.id) })
+			for (const n of data.items) map.set(n.id, n)
+			set({ items: map, order: data.items.map(d => d.id), total: data.total, page: data.page, pageSize: data.pageSize })
 		} catch (e: any) {
 			console.error('listNotifications failed', e)
 			set({ error: String(e) })
