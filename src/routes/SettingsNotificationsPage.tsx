@@ -1,18 +1,15 @@
 import { useUi } from '../store/useUi'
+import { Link } from 'react-router-dom'
 
 export default function SettingsNotificationsPage() {
-	const { skin, setSkin, theme, setTheme, density, setDensity } = useUi()
+	const { theme, setTheme, density, setDensity } = useUi()
 	return (
 		<div className="space-y-4">
+			<div className="mb-6">
+				<Link to="/notifications" className="ui-btn ui-btn--ghost h-10 px-4">{'< Back'}</Link>
+			</div>
 			<h2 className="text-sm font-semibold">Appearance</h2>
 			<div className="ui-card p-4 space-y-3">
-				<div className="flex items-center justify-between">
-					<label>Skin</label>
-					<div className="ui-seg" role="group" aria-label="Skin">
-						<button className="ui-segitem" data-active={skin==='default'} aria-pressed={skin==='default'} onClick={()=>setSkin('default')}>Default</button>
-						<button className="ui-segitem" data-active={skin==='kadoa'} aria-pressed={skin==='kadoa'} onClick={()=>setSkin('kadoa')}>Kadoa</button>
-					</div>
-				</div>
 				<div className="flex items-center justify-between">
 					<label>Theme</label>
 					<div className="ui-seg" role="group" aria-label="Theme">
