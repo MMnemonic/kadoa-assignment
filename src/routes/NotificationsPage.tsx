@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useNotifications } from '../store/useNotifications'
 import { useFilters } from '../store/useFilters'
@@ -17,22 +17,6 @@ export default function NotificationsPage({ containerRef }: { containerRef: Reac
 	const { list, items, order, loading, subscribe, total, page, pageSize } = useNotifications()
 	const filtersRef = useRef<HTMLDivElement>(null)
 	useStickyOffset({ containerRef: containerRef as unknown as React.RefObject<HTMLElement>, filtersRef: filtersRef as unknown as React.RefObject<HTMLElement>, topbarSelector: '[data-topbar="true"]' })
-
-	useEffect(() => {
-		const measure = () => {
-			const topbar = document.querySelector<HTMLElement>('[data-topbar="true"]')
-			const a = topbar?.getBoundingClientRect().height ?? 0
-			const b = filtersRef.current?.getBoundingClientRect().height ?? 0
-			// reserved: combined offset a+b+8 used by floating headers if enabled
-		}
-		measure()
-		const ro = new ResizeObserver(measure)
-		const topbar = document.querySelector<HTMLElement>('[data-topbar="true"]')
-		topbar && ro.observe(topbar)
-		filtersRef.current && ro.observe(filtersRef.current)
-		window.addEventListener('resize', measure)
-		return () => { ro.disconnect(); window.removeEventListener('resize', measure) }
-	}, [])
 
 	useEffect(() => {
 		const off = subscribe()
@@ -96,15 +80,12 @@ export default function NotificationsPage({ containerRef }: { containerRef: Reac
 	// Drawer param wiring
 	const params = new URLSearchParams(location.search)
 	const openId = params.get('n') || undefined
-	const currentIdx = openId ? order.findIndex(id => id === openId) : -1
 	const current = openId ? items.get(openId) ?? null : null
 	const setOpen = (id?: string) => {
 		const next = new URLSearchParams(location.search)
 		if (!id) next.delete('n'); else next.set('n', id)
 		navigate({ pathname: '/notifications', search: '?' + next.toString() }, { replace: true })
 	}
-	const onPrev = () => { if (currentIdx > 0) setOpen(order[currentIdx - 1]) }
-	const onNext = () => { if (currentIdx >= 0 && currentIdx < order.length - 1) setOpen(order[currentIdx + 1]) }
 
 	const onChangePage = (nextPage: number) => {
 		if (nextPage < 1) return
