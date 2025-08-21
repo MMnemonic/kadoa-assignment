@@ -1,5 +1,3 @@
-import React from 'react'
-
 export default function Pagination({ page, pageSize, total, onPageChange }: { page: number; pageSize: number; total: number; onPageChange: (p: number) => void }) {
 	const totalPages = Math.max(1, Math.ceil(total / Math.max(1, pageSize)))
 	const canPrev = page > 1

@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import { useRef } from 'react'
 import { ExternalLink } from 'lucide-react'
 
 type Item = {
@@ -37,7 +37,6 @@ export default function NotificationItem({ item, onOpen, n, selectedId, onExtern
 	const data: Item = item || (n ? { id: n.id, title: n.title, sourceUrl: n.sourceUrl, workflowName: n.workflowName, severity: n.severity, unread: n.unread } : ({} as any))
 	const title = data.title ?? data.message ?? 'New event detected'
 	const domain = data.domain ?? data.site ?? data.source ?? (data.sourceUrl ? new URL(data.sourceUrl).hostname : '')
-	const timeago = data.timeago ?? ''
 	const tags = data.tags ?? (data.workflowName ? [data.workflowName] : [])
 	const isSelected = selectedId ? data.id === selectedId : false
 

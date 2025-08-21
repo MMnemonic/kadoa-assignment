@@ -10,12 +10,10 @@ import { useNotifications } from '../store/useNotifications'
 type Props = {
 	open: boolean
 	onClose: () => void
-	onPrev?: () => void
-	onNext?: () => void
 	data?: Notification | null
 }
 
-export default function DetailsDrawer({ open, onClose, onPrev, onNext, data }: Props) {
+export default function DetailsDrawer({ open, onClose, data }: Props) {
 	const panelRef = useRef<HTMLDivElement>(null)
 	const returnFocusRef = useRef<HTMLElement | null>(null)
 	const { markUnread, markRead, pin, unpin } = useNotifications()

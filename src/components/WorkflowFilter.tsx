@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Popover } from '@headlessui/react'
 import { ChevronDown } from 'lucide-react'
 import clsx from 'clsx'

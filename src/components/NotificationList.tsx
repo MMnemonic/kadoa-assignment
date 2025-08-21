@@ -1,4 +1,3 @@
-import React from 'react'
 import NotificationItem from './NotificationItem'
 
 type Notification = {

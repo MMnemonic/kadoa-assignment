@@ -1,10 +1,9 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useNotifications } from '../store/useNotifications'
 import { useFilters } from '../store/useFilters'
 import { useStickyOffset } from '../hooks/useStickyOffset'
-import { buildQuery, parseQuery } from '../url/query'
-import { mockApi } from '../api/mockAdapter'
+import { parseQuery } from '../url/query'
 import HeaderBar from '../components/HeaderBar'
 import NotificationList from '../components/NotificationList'
 import DetailsDrawer from '../components/DetailsDrawer'
@@ -17,15 +16,14 @@ export default function NotificationsPage({ containerRef }: { containerRef: Reac
 	const filters = useFilters()
 	const { list, items, order, loading, subscribe, total, page, pageSize } = useNotifications()
 	const filtersRef = useRef<HTMLDivElement>(null)
-	useStickyOffset({ containerRef, filtersRef, topbarSelector: '[data-topbar="true"]' })
+	useStickyOffset({ containerRef: containerRef as unknown as React.RefObject<HTMLElement>, filtersRef: filtersRef as unknown as React.RefObject<HTMLElement>, topbarSelector: '[data-topbar="true"]' })
 
-	const [offsetPx, setOffsetPx] = useState(96)
 	useEffect(() => {
 		const measure = () => {
 			const topbar = document.querySelector<HTMLElement>('[data-topbar="true"]')
 			const a = topbar?.getBoundingClientRect().height ?? 0
 			const b = filtersRef.current?.getBoundingClientRect().height ?? 0
-			setOffsetPx(Math.round(a + b + 8))
+			// reserved: combined offset a+b+8 used by floating headers if enabled
 		}
 		measure()
 		const ro = new ResizeObserver(measure)
@@ -37,7 +35,6 @@ export default function NotificationsPage({ containerRef }: { containerRef: Reac
 	}, [])
 
 	useEffect(() => {
-		// wire subscription
 		const off = subscribe()
 		return () => off()
 	}, [subscribe])
@@ -57,9 +54,7 @@ export default function NotificationsPage({ containerRef }: { containerRef: Reac
 		;(async () => {
 			try {
 				await list(params)
-			} finally {
-				// loading flag handled by store; ensure no leak
-			}
+			} finally {}
 		})()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [location.key])
@@ -125,7 +120,7 @@ export default function NotificationsPage({ containerRef }: { containerRef: Reac
 					<Pagination page={page} pageSize={pageSize} total={total} onPageChange={onChangePage} />
 				</div>
 			</section>
-			<DetailsDrawer open={!!openId} onClose={() => setOpen(undefined)} onPrev={currentIdx > 0 ? onPrev : undefined} onNext={currentIdx >= 0 && currentIdx < order.length - 1 ? onNext : undefined} data={current as any} />
+			<DetailsDrawer open={!!openId} onClose={() => setOpen(undefined)} data={current as any} />
 		</div>
 	)
 } 
