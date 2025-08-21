@@ -5,7 +5,7 @@
 /* Kadoa variables — light defaults */
 :root {
 	/* Light theme tuned for contrast */
-	--bg-canvas: 246 247 249;   /* slightly cooler, helps pattern fade */
+	--bg-canvas: 236 238 242;   /* slightly darker to increase contrast */
 	--bg-surface: 255 255 255;  /* tiles/panels remain pure white */
 	--bg-subtle: 241 243 245;   /* used for active pill bg etc. */
 	--border: 212 217 223;      /* visible light border */
@@ -84,6 +84,9 @@ body { @apply bg-[rgb(var(--bg-canvas))] text-[rgb(var(--text))]; }
 	/* Surfaces & cards */
 	.ui-surface { @apply bg-[rgb(var(--bg-surface))] border border-[rgb(var(--border))] dark:border-white/10 rounded-xl shadow-elev-1; }
 	.ui-card    { @apply ui-surface p-4; }
+	/* Light-only translucency for generic cards */
+	.ui-card { background-color: rgb(var(--bg-surface) / 0.8); }
+	.dark .ui-card { background-color: rgb(var(--bg-surface)); }
 	.ui-card-hover { @apply transition-all duration-150 hover:shadow-elev-2 hover:-translate-y-0.5 hover:ring-1 hover:ring-[rgb(var(--accent))] hover:border-transparent focus-within:ring-1 focus-within:ring-[rgb(var(--accent))]; }
 
 	/* Buttons */
@@ -107,8 +110,8 @@ body { @apply bg-[rgb(var(--bg-canvas))] text-[rgb(var(--text))]; }
 	/* Badges / chips */
 	.ui-chip { @apply inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs border; }
 	.ui-chip--info { @apply border-transparent bg-blue-50 text-blue-700 dark:bg-blue-500/10 dark:text-blue-300; }
-	.ui-chip--warn { background-color: rgb(var(--chip-warn-bg)); color: rgb(var(--chip-warn-text)); @apply border-[rgb(var(--border))]; }
-	.ui-chip--crit { background-color: rgb(var(--chip-crit-bg)); color: rgb(var(--chip-crit-text)); @apply border-[rgb(var(--border))]; }
+	.ui-chip--warn { background-color: rgb(var(--chip-warn-bg)); color: rgb(var(--chip-warn-text)); border-color: rgb(var(--chip-warn-text)); }
+	.ui-chip--crit { background-color: rgb(var(--chip-crit-bg)); color: rgb(var(--chip-crit-text)); border-color: rgb(var(--chip-crit-text)); }
 
 	/* Group header labels inside list (Today/Yesterday/Earlier) */
 	.group-header {
@@ -152,8 +155,18 @@ body { @apply bg-[rgb(var(--bg-canvas))] text-[rgb(var(--text))]; }
 	/* Static group header handled above */
 
 	/* --- Glass containers (near solid, no blur) --- */
-	.ui-glass { @apply rounded-2xl border shadow-elev-1 backdrop-blur-none; background-color: rgb(var(--bg-surface) / 0.8); border-color: rgb(var(--border)); }
-	.ui-glass-strong { @apply rounded-2xl border shadow-elev-2 backdrop-blur-none; background-color: rgb(var(--bg-surface) / 0.8); border-color: rgb(var(--border)); }
+	.ui-glass { @apply rounded-2xl border shadow-elev-1 backdrop-blur-none; background-color: rgb(var(--bg-surface) / 0.7); border-color: rgb(var(--border)); }
+	.dark .ui-glass { background-color: rgb(var(--bg-surface) / 0.8); }
+	.ui-glass-strong { @apply rounded-2xl border shadow-elev-2 backdrop-blur-none; background-color: rgb(var(--bg-surface) / 0.7); border-color: rgb(var(--border)); }
+	.dark .ui-glass-strong { background-color: rgb(var(--bg-surface) / 0.8); }
+	/* Ensure translucency wins when both classes are present */
+	.ui-card.ui-glass { background-color: rgb(var(--bg-surface) / 0.7); }
+	.dark .ui-card.ui-glass { background-color: rgb(var(--bg-surface) / 0.8); }
+	.ui-card.ui-glass-strong { background-color: rgb(var(--bg-surface) / 0.7); }
+	.dark .ui-card.ui-glass-strong { background-color: rgb(var(--bg-surface) / 0.8); }
+	/* Force light-mode translucency even if utility classes override */
+	:root .ui-card.ui-glass, :root .ui-card.ui-glass-strong, :root .ui-glass, :root .ui-glass-strong { background-color: rgb(var(--bg-surface) / 0.7) !important; }
+	.dark .ui-card.ui-glass, .dark .ui-card.ui-glass-strong, .dark .ui-glass, .dark .ui-glass-strong { background-color: rgb(var(--bg-surface) / 0.8) !important; }
 	.ui-glass .notif-row, .ui-glass .ui-btn, .ui-glass .ui-chip, .ui-glass .ui-field, .ui-glass .ui-segitem, .ui-glass-strong .notif-row, .ui-glass-strong .ui-btn, .ui-glass-strong .ui-chip, .ui-glass-strong .ui-field, .ui-glass-strong .ui-segitem { background-color: rgb(var(--bg-surface)); }
 
 	/* Drawer helper */
@@ -167,7 +180,10 @@ body { @apply bg-[rgb(var(--bg-canvas))] text-[rgb(var(--text))]; }
 	.unread-dot { @apply inline-block h-2 w-2 rounded-full bg-[rgb(var(--accent))]; }
 
 	/* ---- Notification card (mobile-first) ---- */
-	.notif-card { @apply relative ui-card rounded-2xl p-4 sm:p-5 border border-white/10 bg-[rgb(var(--bg-surface))] transition; }
+	.notif-card { @apply relative ui-card rounded-2xl p-4 sm:p-5 bg-[rgb(var(--bg-surface))] transition; }
+	/* Light-only translucency for notification items */
+	.notif-card { background-color: rgb(var(--bg-surface) / 0.8); }
+	.dark .notif-card { background-color: rgb(var(--bg-surface)); }
 	/* keyboard focus inside the card */
 	.notif-card:focus-within { @apply ring-2 ring-[rgb(var(--accent))]; }
 	/* drawer-selected row only */
@@ -181,8 +197,8 @@ body { @apply bg-[rgb(var(--bg-canvas))] text-[rgb(var(--text))]; }
 	.notif-title { @apply text-base sm:text-lg font-semibold leading-snug text-white; }
 	.clamp-2 { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
 
-	.meta-row { @apply text-xs text-white/50 mt-2 flex items-center gap-2; }
-	.meta-dot::before { content: '•'; @apply mx-1 text-white/30; }
+	.meta-row { @apply text-xs mt-2 flex items-center gap-2 text-[rgb(var(--text-muted))] dark:text-white/60; }
+	.meta-dot::before { content: '•'; @apply mx-1 text-[rgb(var(--text-muted))] dark:text-white/30; }
 
 	.tags-row { @apply mt-3 flex gap-2 overflow-x-auto no-scrollbar; }
 	.no-scrollbar::-webkit-scrollbar { display: none; }
@@ -198,6 +214,17 @@ body { @apply bg-[rgb(var(--bg-canvas))] text-[rgb(var(--text))]; }
 	/* Explicit helpers for titles/meta using tokens */
 	.notif-title { @apply text-[rgb(var(--text))]; }
 	.notif-meta  { @apply text-[rgb(var(--text-muted))]; }
+}
+
+/* Light theme accessibility and contrast overrides */
+html[data-theme="light"] {
+	/* Make top navigation bar slightly grey and opaque for clarity */
+	[data-topbar="true"] { background-color: rgb(var(--bg-subtle) / 0.95) !important; border-color: rgb(var(--border)) !important; box-shadow: 0 1px 0 rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.05) !important; }
+	/* Fix low-contrast utility classes used inside the details drawer */
+	.text-white\/50 { color: rgb(var(--text-muted)) !important; }
+	.border-white\/10 { border-color: rgb(var(--border)) !important; }
+	.bg-white\/\[\.04\] { background-color: rgb(var(--bg-subtle)) !important; }
+	.divide-white\/10 > :not([hidden]) ~ :not([hidden]) { border-color: rgb(var(--border)) !important; border-top-color: rgb(var(--border)) !important; }
 }
 
 @layer utilities {
