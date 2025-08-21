@@ -9,39 +9,58 @@ const WORKFLOWS: Workflow[] = [
 	{ id: 'hn', name: 'Hacker News' },
 	{ id: 'pricing', name: 'Pricing' },
 	{ id: 'reg', name: 'Regulatory' },
-	{ id: 'blog', name: 'Blog' },
+	{ id: 'blog', name: 'Tech Blog' },
 	{ id: 'social', name: 'Social' },
 ]
 
 const DOMAINS = {
 	hn: 'news.ycombinator.com',
-	pricing: 'kadoa.com',
+	pricing: 'stripe.com',
 	reg: 'ec.europa.eu',
-	blog: 'blog.kadoa.com',
-	social: 'twitter.com'
+	blog: 'react.dev',
+	social: 'x.com'
 } as const
 
 let items: Notification[] = []
 
+function titleFor(workflowId: string): string {
+	switch (workflowId) {
+		case 'hn': return 'Top HN discussion spotted'
+		case 'pricing': return 'Stripe updated pricing tiers'
+		case 'reg': return 'EU publishes new guidance (DSA)'
+		case 'blog': return 'React blog: new article'
+		case 'social': return 'Trending post on X'
+		default: return 'New event detected'
+	}
+}
+
+function urlFor(workflowId: string, i: number): string {
+	switch (workflowId) {
+		case 'hn': {
+			const base = 40000000
+			return `https://news.ycombinator.com/item?id=${base + i}`
+		}
+		case 'pricing': return 'https://stripe.com/pricing'
+		case 'reg': return 'https://digital-strategy.ec.europa.eu/en/policies/digital-services-act'
+		case 'blog': return 'https://react.dev/blog'
+		case 'social': return 'https://x.com/explore'
+		default: return 'https://example.com'
+	}
+}
+
 function seed() {
 	if (items.length) return
 	const severities: Notification['severity'][] = ['info','warning','critical']
-	const titles = [
-		'Workflow completed successfully',
-		'Price change detected',
-		'Policy update requires attention',
-		'New comment on blog post',
-		'Mention on social platform'
-	]
 	let now = new Date()
 	for (let i = 0; i < 120; i++) {
 		const wf = WORKFLOWS[i % WORKFLOWS.length]
 		const sev = severities[i % severities.length]
 		const created = addHours(subDays(now, Math.floor(i/6)), -i)
+		const link = urlFor(wf.id, i)
 		items.push({
 			id: id(),
-			title: titles[i % titles.length],
-			sourceUrl: `https://${DOMAINS[wf.id as keyof typeof DOMAINS]}/item/${1000+i}`,
+			title: titleFor(wf.id),
+			sourceUrl: link,
 			sourceDomain: DOMAINS[wf.id as keyof typeof DOMAINS],
 			workflowId: wf.id,
 			workflowName: wf.name,
@@ -50,7 +69,7 @@ function seed() {
 			unread: Math.random() > 0.4,
 			pinned: Math.random() > 0.85,
 			tags: Math.random() > 0.6 ? ['system'] : undefined,
-			diff: Math.random() > 0.5 ? [{ field: 'price', before: 19, after: 29 }] : undefined,
+			diff: wf.id === 'pricing' && Math.random() > 0.5 ? [{ field: 'price', before: 19, after: 29 }] : undefined,
 			snoozedUntil: null,
 		})
 	}
@@ -99,7 +118,7 @@ export const mockApi = {
 	async unpin(id: string) { const n = items.find(i => i.id === id); if (n) n.pinned = false },
 	async listWorkflows(): Promise<Workflow[]> {
 		const counts = new Map<string, number>()
-		for (const i of items) counts.set(i.workflowId, (counts.get(i.id) || 0) + (i.unread ? 1 : 0))
+		for (const i of items) counts.set(i.workflowId, (counts.get(i.workflowId) || 0) + (i.unread ? 1 : 0))
 		return WORKFLOWS.map(w => ({ ...w, count: counts.get(w.id) || 0 }))
 	},
 	async listSavedViews(): Promise<SavedView[]> {
@@ -124,10 +143,11 @@ export const mockApi = {
 			const created: Notification[] = []
 			for (let i=0;i<howMany;i++) {
 				const wf = WORKFLOWS[Math.floor(Math.random()*WORKFLOWS.length)]
+				const link = urlFor(wf.id, Math.floor(Math.random()*9999))
 				const n: Notification = {
 					id: id(),
-					title: 'New event detected',
-					sourceUrl: `https://${DOMAINS[wf.id as keyof typeof DOMAINS]}/item/${Math.floor(Math.random()*9999)}`,
+					title: titleFor(wf.id),
+					sourceUrl: link,
 					sourceDomain: DOMAINS[wf.id as keyof typeof DOMAINS],
 					workflowId: wf.id,
 					workflowName: wf.name,
