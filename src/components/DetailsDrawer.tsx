@@ -59,10 +59,10 @@ export default function DetailsDrawer({ open, onClose, onPrev, onNext, data }: P
 					{/* Sliding panel (desktop only; instant on mobile) */}
 					<Transition.Child
 						as={Fragment}
-						enter="duration-0 motion-safe:lg:duration-300 motion-safe:lg:ease-out"
+						enter="duration-0 motion-safe:lg:duration-300 motion-safe:lg:ease-out motion-reduce:duration-0"
 						enterFrom="opacity-100 lg:translate-x-full"
 						enterTo="opacity-100 lg:translate-x-0"
-						leave="duration-0 motion-safe:lg:duration-250 motion-safe:lg:ease-in"
+						leave="duration-0 motion-safe:lg:duration-300 motion-safe:lg:ease-in motion-reduce:duration-0"
 						leaveFrom="opacity-100 lg:translate-x-0"
 						leaveTo="opacity-100 lg:translate-x-full"
 					>
@@ -72,7 +72,7 @@ export default function DetailsDrawer({ open, onClose, onPrev, onNext, data }: P
 							aria-modal="true"
 							aria-labelledby="drawer-title"
 							tabIndex={-1}
-							className="absolute right-0 inset-y-0 w-full lg:max-w-[720px] bg-[rgb(var(--bg-surface))] border-l border-[rgb(var(--border))] shadow-elev-2 pointer-events-auto outline-none"
+							className="absolute right-0 inset-y-0 w-full lg:max-w-[720px] bg-[rgb(var(--bg-surface))] border-l border-[rgb(var(--border))] shadow-elev-2 pointer-events-auto outline-none will-change-transform"
 						>
 							<div key={bodyKey} className="grid h-full grid-rows-[auto,1fr,auto]">
 								{/* Header: title + controls + tabs */}
