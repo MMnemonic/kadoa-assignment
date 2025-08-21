@@ -58,12 +58,29 @@ export default function DetailsDrawer({ open, onClose, onPrev, onNext, data }: P
 			<Transition show={open} as={Fragment} appear>
 				<div className="fixed inset-0 z-[100] pointer-events-none">
 					{/* Overlay */}
-					<Transition.Child as={Fragment}>
+					<Transition.Child
+						as={Fragment}
+						enter="duration-0 motion-safe:lg:duration-200"
+						enterFrom="opacity-0"
+						enterTo="opacity-100"
+						leave="duration-0 motion-safe:lg:duration-150"
+						leaveFrom="opacity-100"
+						leaveTo="opacity-0"
+					>
 						<div className="absolute inset-0 bg-black/40 pointer-events-auto" onClick={onClose} />
 					</Transition.Child>
 
 					{/* Panel */}
-					<Transition.Child as={Fragment}>
+					<Transition.Child
+						as={Fragment}
+						enter="duration-0 motion-safe:lg:duration-300 motion-safe:lg:ease-out motion-reduce:duration-0"
+						enterFrom="opacity-100 lg:translate-x-full"
+						enterTo="opacity-100 lg:translate-x-0"
+						leave="duration-0 motion-safe:lg:duration-300 motion-safe:lg:ease-in motion-reduce:duration-0"
+						leaveFrom="opacity-100 lg:translate-x-0"
+						leaveTo="opacity-100 lg:translate-x-full"
+						afterLeave={() => setSnapshot(null)}
+					>
 						<aside
 							ref={panelRef}
 							className="absolute right-0 inset-y-0 w-full lg:max-w-[720px] bg-[rgb(var(--bg-surface))] border-l border-[rgb(var(--border))] shadow-elev-2 pointer-events-auto outline-none will-change-transform"
