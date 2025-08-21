@@ -6,6 +6,22 @@ This repository contains a small Notification Center built with React + Tailwind
   <img src="public/preview.png" alt="Notification Center screenshot" width="100%" />
 </p>
 
+## Index
+
+- [Why design in code?](#why-design-in-code)
+- [Development process](#development-process)
+- [What’s in this MVP](#whats-in-this-mvp)
+- [What I explicitly chose not to do (and why)](#what-i-explicitly-chose-not-to-do-and-why)
+- [Architecture overview](#architecture-overview)
+- [Key UX decisions (within the timebox)](#key-ux-decisions-within-the-timebox)
+- [Implementation highlights](#implementation-highlights)
+- [What’s missing (if I had more time)](#whats-missing-if-i-had-more-time)
+- [Getting started](#getting-started)
+- [Repository tour](#repository-tour)
+- [Notable constraints & tradeoffs](#notable-constraints--tradeoffs)
+- [Known edges](#known-edges)
+- [Final note](#final-note)
+
 ## Why design in code?
 
 - Time constraint: High‑fidelity mocks + multiple responsive states would easily exceed the allotted time. Designing in code let me express the UI, interactions, and constraints directly.
@@ -23,7 +39,7 @@ I used AI to scaffold the backbone of the project. I started by prompting the de
 - Pagination (server‑style) with compact controls and mobile adaptations
 - Details drawer (summary, diff table, raw payload)
 - Live updates via a mock subscription (new notifications arrive periodically)
-- Theming and visuals tuned for a dark default, with refined light styles kept if needed
+- Dark theme only (no theme switching); cohesive tokens and accent usage
 - Credible mock data (real outbound links for HN, Stripe pricing, EU DSA, React blog, X)
 
 ## What I explicitly chose not to do (and why)
@@ -37,7 +53,7 @@ I used AI to scaffold the backbone of the project. I started by prompting the de
 - React 19 (Vite 7), TypeScript strict, Tailwind 3
 - URL and state
   - `zustand` stores: notifications (data + pagination) and filters (URL‑bound)
-  - `src/url/query.ts` parses/builds query params; `NotificationsPage` preserves the `n` param (open drawer) to avoid flicker/close
+  - `src/url/query.ts` parses/builds query params
 - UI components
   - `NotificationList` → groups by day, renders `NotificationItem`
   - `DetailsDrawer` → overlay with summary/diff/raw
@@ -51,13 +67,10 @@ I used AI to scaffold the backbone of the project. I started by prompting the de
 ## Key UX decisions (within the timebox)
 
 - Grouped timeline with clear section labels and extra spacing to reduce fatigue
-- URL is the source of truth for filters and the open drawer; links are shareable
-- Drawer actions wired (mark read/unread, pin/unpin) with immediate local feedback
 - Pagination is intentionally simple (1–4) to keep controls compact while demonstrating server‑style paging
 
 ## Implementation highlights
 
-- Preserving the drawer param `?n=<id>` when syncing filters to the URL fixes a common flicker/auto‑close bug.
 - Pagination replaces the page rather than appending (no infinite growth when clicking Next).
 - Live updates merge new items at the top and bump KPI counts (simple but effective signal).
 - Credible outbound links:
@@ -69,8 +82,8 @@ I used AI to scaffold the backbone of the project. I started by prompting the de
 
 ## What’s missing (if I had more time)
 
-- A short “Approach” doc (Task 1) with personas, jobs‑to‑be‑done, MVP scope, risks, and success metrics
-- A static design snapshot (Task 2) or annotated wireframes to show responsive states and empty/loading/error
+- URL as the single source of truth for filters and open drawer; fully shareable links across sessions
+- Drawer actions (mark read/unread, pin/unpin) reflected visually in the list and KPIs with immediate feedback
 - Bulk actions with the existing selection store (multi‑select + mark/pin)
 - Sort and time‑range UI (params are already supported)
 - A visible indicator for new items (“Jump to latest” chip/badge)
@@ -82,7 +95,7 @@ I used AI to scaffold the backbone of the project. I started by prompting the de
 ```bash
 npm i
 npm run dev   # open http://localhost:5174/notifications
-npm run test  # minimal tests (add more with time)
+npm run test  # minimal tests; I would flesh out a broader test suite with more time
 npm run build && npm run preview
 ```
 
