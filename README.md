@@ -6,6 +6,8 @@ This repository contains a small Notification Center built with React + Tailwind
   <img src="public/preview.png" alt="Notification Center screenshot" width="100%" />
 </p>
 
+Preview: [kadoa-assignment.netlify.app](https://kadoa-assignment.netlify.app)
+
 ## Index
 
 - [Why design in code?](#why-design-in-code)
