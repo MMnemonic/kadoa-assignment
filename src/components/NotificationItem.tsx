@@ -44,14 +44,6 @@ export default function NotificationItem({ item, onOpen, n, selectedId, onExtern
 	const rowRef = useRef<HTMLElement>(null)
 
 	const openDetails = () => onOpen?.(data.id)
-	const onKeyActivate: React.KeyboardEventHandler<HTMLElement> = (e) => {
-		// Only trigger for the article itself, not child controls
-		if (e.currentTarget !== e.target) return
-		if (e.key === 'Enter' || e.key === ' ') {
-			e.preventDefault()
-			openDetails()
-		}
-	}
 
 	// Best-effort URL detection from the item
 	const href = (data as any).url ?? (data as any).link ?? data.sourceUrl ?? (data as any).permalink ?? (data as any).page ?? null
@@ -78,7 +70,7 @@ export default function NotificationItem({ item, onOpen, n, selectedId, onExtern
 	}
 
 	return (
-		<article ref={rowRef} className="notif-card group cursor-pointer" data-selected={isSelected ? 'true' : undefined} role="button" tabIndex={0} onClick={openDetails}>
+		<article ref={rowRef} className="notif-card group cursor-pointer" data-selected={isSelected ? 'true' : undefined} onClick={openDetails}>
 			<div className="relative z-10">
 				<div className="notif-head">
 					<span className="unread-dot mt-2" style={{ opacity: data.unread ? 1 : 0.25 }} />

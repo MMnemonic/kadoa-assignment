@@ -57,49 +57,24 @@ export default function DetailsDrawer({ open, onClose, onPrev, onNext, data }: P
 		<Portal>
 			<Transition show={open} as={Fragment} appear>
 				<div className="fixed inset-0 z-[100] pointer-events-none">
-					{/* Overlay with desktop-only fade */}
-					<Transition.Child
-						as={Fragment}
-						enter="duration-0 motion-safe:lg:duration-200"
-						enterFrom="opacity-0"
-						enterTo="opacity-100"
-						leave="duration-0 motion-safe:lg:duration-150"
-						leaveFrom="opacity-100"
-						leaveTo="opacity-0"
-					>
-						<div
-							className="absolute inset-0 bg-black/40 pointer-events-auto"
-							onClick={onClose}
-							aria-hidden
-						/>
+					{/* Overlay */}
+					<Transition.Child as={Fragment}>
+						<div className="absolute inset-0 bg-black/40 pointer-events-auto" onClick={onClose} />
 					</Transition.Child>
 
-					{/* Sliding panel (desktop only; instant on mobile) */}
-					<Transition.Child
-						as={Fragment}
-						enter="duration-0 motion-safe:lg:duration-300 motion-safe:lg:ease-out motion-reduce:duration-0"
-						enterFrom="opacity-100 lg:translate-x-full"
-						enterTo="opacity-100 lg:translate-x-0"
-						leave="duration-0 motion-safe:lg:duration-300 motion-safe:lg:ease-in motion-reduce:duration-0"
-						leaveFrom="opacity-100 lg:translate-x-0"
-						leaveTo="opacity-100 lg:translate-x-full"
-						afterLeave={() => setSnapshot(null)}
-					>
+					{/* Panel */}
+					<Transition.Child as={Fragment}>
 						<aside
 							ref={panelRef}
-							role="dialog"
-							aria-modal="true"
-							aria-labelledby="drawer-title"
-							tabIndex={-1}
 							className="absolute right-0 inset-y-0 w-full lg:max-w-[720px] bg-[rgb(var(--bg-surface))] border-l border-[rgb(var(--border))] shadow-elev-2 pointer-events-auto outline-none will-change-transform"
 						>
 							{visible && (
 								<div key={bodyKey} className="grid h-full grid-rows-[auto,1fr,auto]">
-									{/* Header: title + controls + tabs */}
+									{/* Header */}
 									<div className="row-start-1 sticky top-0 z-10 bg-[rgb(var(--bg-surface))] border-b border-[rgb(var(--border))] px-4 pt-[calc(env(safe-area-inset-top,0px)+16px)] pb-6">
 										<div className="flex items-center justify-between gap-2 py-1">
 											<div className="min-w-0">
-												<h2 id="drawer-title" className="truncate text-lg font-semibold">
+												<h2 className="truncate text-lg font-semibold">
 													{visible.title ?? 'Notification'}
 												</h2>
 												<div className="mt-1 text-xs text-[rgb(var(--text-muted))] dark:text-white/60 truncate">
@@ -107,7 +82,7 @@ export default function DetailsDrawer({ open, onClose, onPrev, onNext, data }: P
 												</div>
 											</div>
 											<div className="flex items-center gap-2">
-												<button className="ui-btn ui-btn--ghost" onClick={onClose} aria-label="Close">
+												<button className="ui-btn ui-btn--ghost" onClick={onClose}> 
 													<X className="h-4 w-4" />
 												</button>
 											</div>
@@ -119,9 +94,8 @@ export default function DetailsDrawer({ open, onClose, onPrev, onNext, data }: P
 										</div>
 									</div>
 
-									{/* Scrollable content */}
+									{/* Content */}
 									<div className="row-start-2 min-h-0 overflow-auto px-4 py-6 space-y-6">
-										{/* Summary */}
 										<section className="space-y-3">
 											<SafeValue value={(visible as any)?.summary ?? 'No summary available.'} />
 											<div className="flex flex-wrap gap-2 mt-3">
@@ -131,7 +105,6 @@ export default function DetailsDrawer({ open, onClose, onPrev, onNext, data }: P
 											</div>
 										</section>
 
-										{/* Diff */}
 										<section className="space-y-3">
 											<div className="text-xs uppercase tracking-wide text-[rgb(var(--text-muted))] dark:text-white/60">Change preview</div>
 											{(() => {
@@ -165,7 +138,6 @@ export default function DetailsDrawer({ open, onClose, onPrev, onNext, data }: P
 										})()}
 										</section>
 
-										{/* Raw */}
 										<section className="space-y-3">
 											<div className="text-xs uppercase tracking-wide text-[rgb(var(--text-muted))] dark:text-white/60">Raw payload</div>
 											<SafeValue value={(visible as any)?.raw ?? (visible as any)?.payload ?? {}} />
