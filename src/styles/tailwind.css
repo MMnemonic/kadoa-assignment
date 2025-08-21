@@ -125,7 +125,7 @@ body { @apply bg-[rgb(var(--bg-canvas))] text-[rgb(var(--text))]; }
 	/* Group header labels inside list (Today/Yesterday/Earlier) */
 	.group-header {
 		@apply px-4 py-1 text-xs font-medium tracking-wide
-			text-[rgb(var(--text-muted))] dark:text-white/60;
+			text-[rgb(var(--text-muted))] dark:text-white/60 mb-3 sm:mb-4;
 	}
 
 	/* Segmented control: clear contrast in light, unchanged in dark */

@@ -110,20 +110,18 @@ export default function NotificationItem({ item, onOpen, n, selectedId, onExtern
 					)}
 				</div>
 
-				<div className="tags-row">
-					{severityChip(data.severity)}
-					{tags.map((t, i) => (
-						<span key={`${t}-${i}`} className="ui-chip">{t}</span>
-					))}
-				</div>
-
-				{(domain || timeago) && (
-					<div className="meta-row">
-						{domain && <span className="truncate">{domain}</span>}
-						{domain && timeago && <span className="meta-dot" />}
-						{timeago && <span>{timeago}</span>}
+				{/* Bottom row: labels left, domain right */}
+				<div className="mt-3 flex items-center justify-between gap-3">
+					<div className="flex items-center gap-2 flex-wrap">
+						{severityChip(data.severity)}
+						{tags.map((t, i) => (
+							<span key={`${t}-${i}`} className="ui-chip">{t}</span>
+						))}
 					</div>
-				)}
+					<div className="text-xs text-[rgb(var(--text-muted))] dark:text-white/60 truncate ml-auto">
+						{domain}
+					</div>
+				</div>
 			</div>
 		</article>
 	)
