@@ -36,6 +36,12 @@ export default function NotificationsPage({ containerRef }: { containerRef: Reac
 		return () => { ro.disconnect(); window.removeEventListener('resize', measure) }
 	}, [])
 
+	useEffect(() => {
+		// wire subscription
+		const off = subscribe()
+		return () => off()
+	}, [subscribe])
+
 	const lastAppliedRef = useRef<string>('')
 
 	// Parse and apply once per navigation event
@@ -81,6 +87,10 @@ export default function NotificationsPage({ containerRef }: { containerRef: Reac
 
 	const listItems = order.map(id => items.get(id)!).filter(Boolean)
 
+	const handleClearFilters = () => {
+		filters.set({ q: undefined, unread: undefined, severities: new Set(), workflowIds: new Set(), sort: undefined, range: undefined, page: 1 })
+	}
+
 	// Drawer param wiring
 	const params = new URLSearchParams(location.search)
 	const openId = params.get('n') || undefined
@@ -103,7 +113,7 @@ export default function NotificationsPage({ containerRef }: { containerRef: Reac
 		<div className="space-y-4">
 			<HeaderBar />
 			<section className="ui-card ui-glass">
-				<NotificationList items={listItems as any} loading={loading} onOpen={setOpen} selectedId={openId} />
+				<NotificationList items={listItems as any} loading={loading} onOpen={setOpen} selectedId={openId} onClearFilters={handleClearFilters} />
 				<div className="mt-4">
 					<Pagination page={page} pageSize={pageSize} total={total} onPageChange={onChangePage} />
 				</div>

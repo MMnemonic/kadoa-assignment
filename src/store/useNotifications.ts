@@ -39,14 +39,36 @@ export const useNotifications = create<NotificationsState>((set, get) => ({
 			set({ loading: false })
 		}
 	},
-	async markRead(id) { await mockApi.markRead(id); },
-	async markUnread(id) { await mockApi.markUnread(id); },
-	async pin(id) { await mockApi.pin(id) },
-	async unpin(id) { await mockApi.unpin(id) },
+	async markRead(id) {
+		await mockApi.markRead(id)
+		const ids = Array.isArray(id) ? id : [id]
+		const map = new Map(get().items)
+		ids.forEach((i) => { const n = map.get(i); if (n) n.unread = false })
+		set({ items: map })
+	},
+	async markUnread(id) {
+		await mockApi.markUnread(id)
+		const ids = Array.isArray(id) ? id : [id]
+		const map = new Map(get().items)
+		ids.forEach((i) => { const n = map.get(i); if (n) n.unread = true })
+		set({ items: map })
+	},
+	async pin(id) {
+		await mockApi.pin(id)
+		const map = new Map(get().items)
+		const n = map.get(id); if (n) n.pinned = true
+		set({ items: map })
+	},
+	async unpin(id) {
+		await mockApi.unpin(id)
+		const map = new Map(get().items)
+		const n = map.get(id); if (n) n.pinned = false
+		set({ items: map })
+	},
 	subscribe() { return mockApi.subscribe((newOnes) => {
 		const map = new Map(get().items)
 		const order = [...get().order]
-		for (const n of newOnes) { map.set(n.id, n); order.unshift(n.id) }
-		set({ items: map, order })
+		for (const n of newOnes) { map.set(n.id, n); if (!order.includes(n.id)) order.unshift(n.id) }
+		set({ items: map, order, total: get().total + newOnes.length })
 	}) }
 })) 

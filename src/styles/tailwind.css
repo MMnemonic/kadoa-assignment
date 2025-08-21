@@ -37,6 +37,15 @@
 	--chip-crit-text: 248 113 113;
 }
 
+/* Density: compact overrides */
+html[data-density="compact"] {
+	--space-scale: 0.85;
+}
+html[data-density="compact"] .ui-card { padding: calc(1rem * var(--space-scale)); }
+html[data-density="compact"] .ui-btn { padding: calc(0.5rem * var(--space-scale)) calc(0.75rem * var(--space-scale)); }
+html[data-density="compact"] .ui-segitem { height: calc(2.25rem * var(--space-scale)); padding-left: calc(0.6rem * var(--space-scale)); padding-right: calc(0.6rem * var(--space-scale)); }
+html[data-density="compact"] .notif-card { padding: calc(1rem * var(--space-scale)); }
+
 /* Canvas */
 body { @apply bg-[rgb(var(--bg-canvas))] text-[rgb(var(--text))]; }
 

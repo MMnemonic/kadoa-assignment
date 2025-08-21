@@ -3,6 +3,12 @@ import { Link } from 'react-router-dom'
 
 export default function SettingsNotificationsPage() {
 	const { theme, setTheme, density, setDensity } = useUi()
+
+	// apply density to document
+	if (typeof document !== 'undefined') {
+		document.documentElement.setAttribute('data-density', density)
+	}
+
 	return (
 		<div className="space-y-4">
 			<div className="mb-6">

@@ -5,6 +5,7 @@ import Portal from '../components/Portal'
 import SafeValue, { renderSafeValue } from './SafeValue'
 import { Transition } from '@headlessui/react'
 import { useBodyScrollLock } from '../hooks/useBodyScrollLock'
+import { useNotifications } from '../store/useNotifications'
 
 type Props = {
 	open: boolean
@@ -17,6 +18,7 @@ type Props = {
 export default function DetailsDrawer({ open, onClose, onPrev, onNext, data }: Props) {
 	const panelRef = useRef<HTMLDivElement>(null)
 	const returnFocusRef = useRef<HTMLElement | null>(null)
+	const { markUnread, markRead, pin, unpin } = useNotifications()
 
 	// Lock body scroll while open
 	useBodyScrollLock(open)
@@ -32,7 +34,7 @@ export default function DetailsDrawer({ open, onClose, onPrev, onNext, data }: P
 	useEffect(() => {
 		if (open) {
 			returnFocusRef.current = (document.activeElement as HTMLElement) ?? null
-			document.body.style.overflow = 'hidden'
+			document.body.style.overflow = ''
 			panelRef.current?.focus()
 		} else {
 			document.body.style.overflow = ''
@@ -41,6 +43,15 @@ export default function DetailsDrawer({ open, onClose, onPrev, onNext, data }: P
 	}, [open])
 
 	const bodyKey = (visible as any)?.id ?? 'closed'
+
+	const toggleRead = async () => {
+		if (!visible) return
+		if (visible.unread) await markRead(visible.id); else await markUnread(visible.id)
+	}
+	const togglePin = async () => {
+		if (!visible) return
+		if (visible.pinned) await unpin(visible.id); else await pin(visible.id)
+	}
 
 	return (
 		<Portal>
@@ -85,7 +96,7 @@ export default function DetailsDrawer({ open, onClose, onPrev, onNext, data }: P
 							{visible && (
 								<div key={bodyKey} className="grid h-full grid-rows-[auto,1fr,auto]">
 									{/* Header: title + controls + tabs */}
-									<div className="row-start-1 sticky top-0 z-10 bg-[rgb(var(--bg-surface))] border-b border-[rgb(var(--border))] px-4 pt-[calc(env(safe-area-inset-top,0px)+12px)] pb-4">
+									<div className="row-start-1 sticky top-0 z-10 bg-[rgb(var(--bg-surface))] border-b border-[rgb(var(--border))] px-4 pt-[calc(env(safe-area-inset-top,0px)+16px)] pb-6">
 										<div className="flex items-center justify-between gap-2 py-1">
 											<div className="min-w-0">
 												<h2 id="drawer-title" className="truncate text-lg font-semibold">
@@ -101,7 +112,7 @@ export default function DetailsDrawer({ open, onClose, onPrev, onNext, data }: P
 												</button>
 											</div>
 										</div>
-										<div className="mt-2 flex items-center gap-2">
+										<div className="mt-3 flex items-center gap-2">
 											<button className="ui-segitem data-[active=true]:bg-white/5" data-active={true}>Summary</button>
 											<button className="ui-segitem">Diff</button>
 											<button className="ui-segitem">Raw</button>
@@ -109,11 +120,11 @@ export default function DetailsDrawer({ open, onClose, onPrev, onNext, data }: P
 									</div>
 
 									{/* Scrollable content */}
-									<div className="row-start-2 min-h-0 overflow-auto px-4 py-4 space-y-4">
+									<div className="row-start-2 min-h-0 overflow-auto px-4 py-6 space-y-6">
 										{/* Summary */}
-										<section className="space-y-2">
+										<section className="space-y-3">
 											<SafeValue value={(visible as any)?.summary ?? 'No summary available.'} />
-											<div className="flex flex-wrap gap-2">
+											<div className="flex flex-wrap gap-2 mt-3">
 												{(((visible as any)?.tags) ?? []).map((t: string) => (
 													<span key={t} className="ui-chip">{t}</span>
 												))}
@@ -121,7 +132,7 @@ export default function DetailsDrawer({ open, onClose, onPrev, onNext, data }: P
 										</section>
 
 										{/* Diff */}
-										<section className="space-y-2">
+										<section className="space-y-3">
 											<div className="text-xs uppercase tracking-wide text-[rgb(var(--text-muted))] dark:text-white/60">Change preview</div>
 											{(() => {
 												const raw: any = (visible as any)?.diff ?? (visible as any)?.changes
@@ -134,38 +145,38 @@ export default function DetailsDrawer({ open, onClose, onPrev, onNext, data }: P
 														}
 														return { field, before: undefined, after: val }
 													})
-												if (!rows.length) return <div className="text-white/50">No diff available.</div>
-												return (
-													<div className="divide-y divide-white/10 rounded-xl overflow-hidden border border-white/10">
-														<div className="grid grid-cols-3 gap-3 px-3 py-2 text-xs uppercase tracking-wide text-white/50 bg-white/[.04]">
-															<div>Field</div>
-															<div>Before</div>
-															<div>After</div>
-														</div>
-													{rows.map((r, i) => (
-														<div key={r.field || i} className="grid grid-cols-3 gap-3 px-3 py-2">
-															<div className="font-medium">{String(r.field ?? '(unknown)')}</div>
-															<div>{renderSafeValue(r.before)}</div>
-															<div>{renderSafeValue(r.after)}</div>
-														</div>
-													))}
-												</div>
-											)
+											if (!rows.length) return <div className="text-white/50">No diff available.</div>
+											return (
+												<div className="divide-y divide-white/10 rounded-xl overflow-hidden border border-white/10">
+													<div className="grid grid-cols-3 gap-3 px-3 py-2 text-xs uppercase tracking-wide text-white/50 bg-white/[.04]">
+														<div>Field</div>
+														<div>Before</div>
+														<div>After</div>
+													</div>
+												{rows.map((r, i) => (
+													<div key={r.field || i} className="grid grid-cols-3 gap-3 px-3 py-2">
+														<div className="font-medium">{String(r.field ?? '(unknown)')}</div>
+														<div>{renderSafeValue(r.before)}</div>
+														<div>{renderSafeValue(r.after)}</div>
+													</div>
+												))}
+											</div>
+										)
 										})()}
 										</section>
 
 										{/* Raw */}
-										<section className="space-y-2">
+										<section className="space-y-3">
 											<div className="text-xs uppercase tracking-wide text-[rgb(var(--text-muted))] dark:text-white/60">Raw payload</div>
 											<SafeValue value={(visible as any)?.raw ?? (visible as any)?.payload ?? {}} />
 										</section>
 									</div>
 
 									{/* Footer */}
-									<div className="row-start-3 px-4 pt-4 pb-[calc(env(safe-area-inset-bottom,0px)+12px)] border-t border-[rgb(var(--border))] flex items-center justify-between gap-3">
+									<div className="row-start-3 px-4 pt-6 pb-[calc(env(safe-area-inset-bottom,0px)+16px)] border-t border-[rgb(var(--border))] flex items-center justify-between gap-3">
 										<div className="flex gap-2">
-											<button className="ui-btn">Mark unread</button>
-											<button className="ui-btn">Pin</button>
+											<button className="ui-btn" onClick={toggleRead}>{visible?.unread ? 'Mark read' : 'Mark unread'}</button>
+											<button className="ui-btn" onClick={togglePin}>{visible?.pinned ? 'Unpin' : 'Pin'}</button>
 										</div>
 										<div className="flex gap-2">
 											<a className="ui-btn" href={(visible as any)?.sourceUrl} target="_blank" rel="noopener noreferrer">
